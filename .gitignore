@@ -15,10 +15,12 @@
 .cache
 
 # idea conf files
-.idea
-*.iml
+# .idea
+# *.iml
 *.ipr
 *.iws
+.idea/workspace.xml
+.idea/libraries
 
 # building
 target

@@ -5,11 +5,9 @@ import org.apache.commons.logging.LogFactory;
 import org.openhmis.common.EventRaiser;
 import org.openhmis.common.FireableEventListenerList;
 import org.openhmis.common.Initializable;
-import org.openhmis.common.Utility;
 import org.openmrs.module.plm.model.PersistentListItemModel;
 import org.openmrs.module.plm.model.PersistentListModel;
 
-import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
