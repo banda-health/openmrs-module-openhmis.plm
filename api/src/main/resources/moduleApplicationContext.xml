@@ -20,10 +20,10 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add the database service provider for the list service -->
-    <bean id="plmServiceProvider" class="org.openmrs.module.plm.db.DatabaseServiceProvider">
+    <bean id="plmServiceProvider" class="org.openmrs.module.openhmis.plm.db.DatabaseServiceProvider">
         <constructor-arg name="sessionFactory" ref="sessionFactory"  />
     </bean>
-    <bean id="plmListProvider" class="org.openmrs.module.plm.db.DatabaseListProvider">
+    <bean id="plmListProvider" class="org.openmrs.module.openhmis.plm.db.DatabaseListProvider">
         <constructor-arg name="sessionFactory" ref="sessionFactory"  />
     </bean>
 
@@ -31,8 +31,8 @@
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
-                <value>org.openmrs.module.plm.PersistentListService</value>
-                <bean class="org.openmrs.module.plm.PersistentListServiceImpl">
+                <value>org.openmrs.module.openhmis.plm.PersistentListService</value>
+                <bean class="org.openmrs.module.openhmis.plm.PersistentListServiceImpl">
                     <constructor-arg name="provider" ref="plmServiceProvider" />
                 </bean>
             </list>

@@ -20,17 +20,17 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <!-- Add the test providers for the service and list providers-->
-    <bean id="plmServiceProvider" class="org.openmrs.module.plm.test.TestPersistentServiceProvider">
+    <bean id="plmServiceProvider" class="org.openmrs.module.openhmis.plm.test.TestPersistentServiceProvider">
     </bean>
-    <bean id="plmListProvider" class="org.openmrs.module.plm.test.TestPersistentListProvider">
+    <bean id="plmListProvider" class="org.openmrs.module.openhmis.plm.test.TestPersistentListProvider">
     </bean>
 
     <!-- Add the list service module which uses the service provider above -->
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
-                <value>org.openmrs.module.plm.PersistentListService</value>
-                <bean class="org.openmrs.module.plm.PersistentListServiceImpl">
+                <value>org.openmrs.module.openhmis.plm.PersistentListService</value>
+                <bean class="org.openmrs.module.openhmis.plm.PersistentListServiceImpl">
                     <constructor-arg name="provider" ref="plmServiceProvider" />
                 </bean>
             </list>

@@ -22,9 +22,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:git@github.com:OpenHMIS/OpenHMIS.git</connection>
-		<developerConnection>scm:git:git@github.com:OpenHMIS/OpenHMIS.git</developerConnection>
-		<url>git@github.com:OpenHMIS/OpenHMIS.git</url>
+		<connection>scm:git:git@github.com:OpenHMIS/plm.git</connection>
+		<developerConnection>scm:git:git@github.com:OpenHMIS/plm.git</developerConnection>
+		<url>scm:git:git@github.com:OpenHMIS/plm.git</url>
 	</scm>
 
 	<modules>
