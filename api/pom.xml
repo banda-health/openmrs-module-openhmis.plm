@@ -4,29 +4,18 @@
 
 	<parent>
 		<groupId>org.openmrs.module</groupId>
-		<artifactId>persistentListManager</artifactId>
+		<artifactId>openhmis-plm</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>persistentListManager-api</artifactId>
+	<artifactId>openhmis-plm-api</artifactId>
 	<packaging>jar</packaging>
-	<name>Persistent List Manager Module API</name>
+	<name>OpenHMIS Persistent List Manager Module API</name>
 	<description>API project for the Persistent List Manager Module</description>
     <version>${project.parent.version}</version>
 
 	<dependencies>
 	
-		<!-- 
-		Add other dependencies from parent's pom:
-		<dependency>
-			<groupId>org.other.library</groupId> 
-			<artifactId>library-key</artifactId>
-		</dependency> 
-		-->
-
-		
-		
-
 		<!-- Begin OpenMRS core -->
 		
 		<dependency>
