@@ -1,5 +1,5 @@
 #The Persistent List Manager Module
-The persisent list manager (plm) is a module that allows other modules to store and retrive items that are stored persistently.  If persistent storage is not required, this module should *not* be used.  The intent for this module is to provide a very basic workflow-like process so that other modules can put patients or other entities into persistent lists as needed.  These lists can be implemented as any data structure so that retrieval can be automatic; for example, a waiting room may need to have a persistent list that is implemented as a queue (first in, first out).
+The persisent list manager (plm) is an OpenMRS module that allows other modules to store and retrive items that are stored persistently.  If persistent storage is not required, this module should *not* be used.  The intent for this module is to provide a very basic workflow-like process so that other modules can put patients or other entities into persistent lists as needed.  These lists can be implemented as any data structure so that retrieval can be automatic; for example, a waiting room may need to have a persistent list that is implemented as a queue (first in, first out).
 
 ##Example Usage
 The general usage is as follows:
