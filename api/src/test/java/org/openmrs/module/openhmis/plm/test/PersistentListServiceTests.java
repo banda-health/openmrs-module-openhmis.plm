@@ -5,7 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.openmrs.module.openhmis.plm.*;
-import org.openmrs.module.plm.*;
+import org.openmrs.module.openhmis.plm.impl.ListServiceEventListenerAdapter;
+import org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
@@ -26,7 +27,7 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void shouldAddNewListWhenNotExisting() {
+	public void ensureList_shouldAddNewListWhenNotExisting() {
 		String key = "test";
 		String desc = "desc";
 
@@ -40,7 +41,7 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void shouldNotAddOrUpdateNewListWhenExistingKey() {
+	public void ensureList_shouldNotAddOrUpdateNewListWhenExistingKey() {
 		String key = "test";
 		String desc = "desc";
 
@@ -57,7 +58,7 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void shouldAddNewListWhenCreateList() {
+	public void createList_shouldAddNewListWhenCreateList() {
 		String key = "test";
 		String desc = "desc";
 
@@ -69,7 +70,7 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void shouldRemoveListWhenExisting() {
+	public void removeList_shouldRemoveListWhenExisting() {
 		String key = "test";
 
 		// Add the list to the service
@@ -83,12 +84,12 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void shouldNotThrowWhenRemovingMissingList() {
+	public void removeList_shouldNotThrowWhenRemovingMissingList() {
 		service.removeList("test");
 	}
 
 	@Test
-	public void shouldReturnAllDefinedLists() {
+	public void getLists_shouldReturnAllDefinedLists() {
 		String key = "test";
 		String key2 = "test2";
 		String key3 = "test3";
@@ -105,7 +106,7 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void shouldNotReturnReferenceToInternalCollection() {
+	public void getLists_shouldNotReturnReferenceToInternalCollection() {
 		String key = "test";
 		String key2 = "test2";
 		String key3 = "test3";
@@ -127,7 +128,7 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void shouldReturnListByKey() {
+	public void ensureList_shouldReturnListByKey() {
 		String key = "test";
 
 		// Add the list to the service
@@ -136,7 +137,7 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void shouldReturnNullForUndefinedKeys() {
+	public void ensureList_shouldReturnNullForUndefinedKeys() {
 		String key = "test";
 
 		// Add the list to the service
@@ -146,19 +147,19 @@ public class PersistentListServiceTests extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void throwIllegalArgumentExceptionInEnsureListWithNullKey() {
+	public void ensureList_throwIllegalArgumentExceptionInEnsureListWithNullKey() {
 		// This should throw
 		service.ensureList(TestPersistentList.class, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void throwIllegalArgumentExceptionInGetListWithEmptyKey() {
+	public void getList_throwIllegalArgumentExceptionInGetListWithEmptyKey() {
 		// This should throw
 		service.getList("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void throwIllegalArgumentExceptionInGetListWithNullKey() {
+	public void getList_throwIllegalArgumentExceptionInGetListWithNullKey() {
 		// This should throw
 		service.getList(null);
 	}

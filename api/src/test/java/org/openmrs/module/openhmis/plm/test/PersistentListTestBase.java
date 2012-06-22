@@ -4,7 +4,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.openhmis.plm.*;
-import org.openmrs.module.plm.*;
+import org.openmrs.module.openhmis.plm.impl.ListEventListenerAdapter;
 
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.hasItems;

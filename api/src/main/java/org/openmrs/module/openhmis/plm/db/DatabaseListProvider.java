@@ -7,11 +7,8 @@ import org.hibernate.*;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
-import org.openmrs.module.openhmis.plm.PersistentList;
-import org.openmrs.module.openhmis.plm.PersistentListException;
-import org.openmrs.module.openhmis.plm.PersistentListProvider;
-import org.openmrs.module.openhmis.plm.PersistentListServiceImpl;
-import org.openmrs.module.plm.*;
+import org.openmrs.module.openhmis.plm.*;
+import org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl;
 import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
 
 import java.sql.Connection;

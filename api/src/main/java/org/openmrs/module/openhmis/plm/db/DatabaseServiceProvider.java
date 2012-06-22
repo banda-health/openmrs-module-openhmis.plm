@@ -7,7 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.openhmis.plm.PersistentListException;
-import org.openmrs.module.openhmis.plm.PersistentListServiceImpl;
+import org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl;
 import org.openmrs.module.openhmis.plm.PersistentListServiceProvider;
 import org.openmrs.module.openhmis.plm.model.PersistentListModel;
 

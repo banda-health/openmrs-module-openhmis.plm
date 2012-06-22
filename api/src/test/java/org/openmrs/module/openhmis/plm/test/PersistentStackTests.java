@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.openmrs.module.openhmis.plm.PersistentList;
 import org.openmrs.module.openhmis.plm.PersistentListItem;
 import org.openmrs.module.openhmis.plm.PersistentListProvider;
-import org.openmrs.module.openhmis.plm.PersistentStack;
+import org.openmrs.module.openhmis.plm.impl.PersistentStack;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
