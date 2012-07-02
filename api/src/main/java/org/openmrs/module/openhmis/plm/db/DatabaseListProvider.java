@@ -10,6 +10,8 @@ import org.hibernate.jdbc.Work;
 import org.openmrs.module.openhmis.plm.*;
 import org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl;
 import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,16 +19,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class DatabaseListProvider implements PersistentListProvider {
-	private static final String ADD_SQL = "UPDATE plm_list_items SET primary_order = primary_order + 1 WHERE list_id = ? AND primary_order >= ?";
-	private static final String REMOVE_SQL = "UPDATE plm_list_items SET primary_order = primary_order - 1 WHERE list_id = ? AND primary_order >= ?";
+	private static final String ADD_SQL =
+			"UPDATE plm_list_items SET primary_order = primary_order + 1 WHERE list_id = ? AND primary_order >= ?";
+	private static final String REMOVE_SQL =
+			"UPDATE plm_list_items SET primary_order = primary_order - 1 WHERE list_id = ? AND primary_order >= ?";
 	private static final String CLEAR_SQL = "DELETE FROM plm_list_items WHERE list_id = ?";
 
 	private Log log = LogFactory.getLog(PersistentListServiceImpl.class);
 	private SessionFactory sessionFactory;
 
+	@Autowired
 	public DatabaseListProvider(SessionFactory sessionFactory) {
-		sessionFactory = sessionFactory;
+		this.sessionFactory = sessionFactory;
 	}
 
 	@Override
@@ -36,7 +42,7 @@ public class DatabaseListProvider implements PersistentListProvider {
 
 	@Override
 	public String getDescription() {
-		return "A persistent list provider that stores items in an OpenMRS database.";
+		return "A persistent list serviceProvider that stores items in an OpenMRS database.";
 	}
 
 	@Override

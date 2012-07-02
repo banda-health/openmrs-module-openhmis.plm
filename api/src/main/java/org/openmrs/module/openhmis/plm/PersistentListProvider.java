@@ -7,14 +7,14 @@ import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
  */
 public interface PersistentListProvider {
 	/**
-	 * Gets the name of the provider.
-	 * @return The name of the provider.
+	 * Gets the name of the serviceProvider.
+	 * @return The name of the serviceProvider.
 	 */
     String getName();
 
 	/**
-	 * Gets a description of the provider.
-	 * @return The description of the provider.
+	 * Gets a description of the serviceProvider.
+	 * @return The description of the serviceProvider.
 	 */
     String getDescription();
 

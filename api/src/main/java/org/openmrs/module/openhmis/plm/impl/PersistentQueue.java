@@ -17,6 +17,11 @@ public class PersistentQueue extends PersistentListBase<LinkedList<PersistentLis
 		super(id, key, provider);
 	}
 
+	/**
+	 *
+	 * @return
+	 * @should return next item from the list in last-in, first-out order
+	 */
 	@Override
 	public PersistentListItem getNext() {
 		return cachedItems.peek();

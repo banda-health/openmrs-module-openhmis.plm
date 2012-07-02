@@ -19,22 +19,12 @@
   		    http://www.springframework.org/schema/util
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-	<!-- Add the database service provider for the list service -->
-    <bean id="plmServiceProvider" class="org.openmrs.module.openhmis.plm.db.DatabaseServiceProvider">
-        <constructor-arg name="sessionFactory" ref="sessionFactory"  />
-    </bean>
-    <bean id="plmListProvider" class="org.openmrs.module.openhmis.plm.db.DatabaseListProvider">
-        <constructor-arg name="sessionFactory" ref="sessionFactory"  />
-    </bean>
-
-    <!-- Add the list service module which uses the service provider above -->
+	<!-- Add the list service module which uses the service serviceProvider above -->
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
                 <value>org.openmrs.module.openhmis.plm.PersistentListService</value>
-                <bean class="org.openmrs.module.openhmis.plm.PersistentListServiceImpl">
-                    <constructor-arg name="provider" ref="plmServiceProvider" />
-                </bean>
+                <bean class="org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl" />
             </list>
         </property>
     </bean>

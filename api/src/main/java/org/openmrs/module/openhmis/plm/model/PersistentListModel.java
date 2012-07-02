@@ -1,13 +1,10 @@
 package org.openmrs.module.openhmis.plm.model;
 
-import org.openmrs.User;
-
 import java.util.Date;
 
 public class PersistentListModel {
 	private Integer listId;
 	private String key;
-	private String providerClass;
 	private String listClass;
 	private String description;
 	private Date createdOn;
@@ -15,23 +12,14 @@ public class PersistentListModel {
 	PersistentListModel() {
 	}
 
-	public PersistentListModel(Integer listId, String key, String providerClass, String listClass, String description,
+	public PersistentListModel(Integer listId, String key, String listClass, String description,
 	                           Date createdOn) {
 		this.listId = listId;
 		this.key = key;
-		this.providerClass = providerClass;
 		this.listClass = listClass;
 		this.description = description;
 
 		this.createdOn = createdOn;
-	}
-
-	public String getProviderClass() {
-		return providerClass;
-	}
-
-	public void setProviderClass(String providerClass) {
-		this.providerClass = providerClass;
 	}
 
 	public String getListClass() {

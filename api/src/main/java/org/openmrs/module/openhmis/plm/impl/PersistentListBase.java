@@ -145,7 +145,7 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 					itemKeys.add(item.getKey());
 					cachedItems.add(item);
 
-					// Add the item to the provider at the specified index
+					// Add the item to the serviceProvider at the specified index
 					PersistentListItemModel modelItem = createItemModel(item);
 					provider.add(modelItem);
 				}
@@ -160,12 +160,12 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 			cachedItems.remove(item);
 
 			/*
-			TODO: Should the item be removed from the provider as well, or it is safe to assume that exceptions
-				can only occur before the item is added to the provider?
+			TODO: Should the item be removed from the serviceProvider as well, or it is safe to assume that exceptions
+				can only occur before the item is added to the serviceProvider?
 			*/
 
 			/*
-			 TODO: Given that a provider could throw pretty much any exception type (DB, file system, network, etc),
+			 TODO: Given that a serviceProvider could throw pretty much any exception type (DB, file system, network, etc),
 			    is it ok to just rethrow it as an Exception?
 			*/
 

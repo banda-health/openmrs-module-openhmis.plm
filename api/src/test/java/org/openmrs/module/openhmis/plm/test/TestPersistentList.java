@@ -8,6 +8,9 @@ import org.openmrs.module.openhmis.plm.PersistentListProvider;
 import org.openmrs.module.openhmis.plm.model.PersistentListModel;
 
 public class TestPersistentList implements PersistentList {
+	public TestPersistentList() {
+	}
+
 	public TestPersistentList(String key) {
 		this(key, new TestPersistentListProvider(), 0);
 	}
@@ -71,7 +74,9 @@ public class TestPersistentList implements PersistentList {
 
 	@Override
 	public void load(PersistentListModel model) {
-		throw new NotImplementedException();
+		key = model.getKey();
+		id = model.getListId();
+		description = model.getDescription();
 	}
 
 	@Override

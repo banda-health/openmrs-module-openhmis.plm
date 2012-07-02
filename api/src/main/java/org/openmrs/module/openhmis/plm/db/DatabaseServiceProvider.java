@@ -10,13 +10,17 @@ import org.openmrs.module.openhmis.plm.PersistentListException;
 import org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl;
 import org.openmrs.module.openhmis.plm.PersistentListServiceProvider;
 import org.openmrs.module.openhmis.plm.model.PersistentListModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
+@Component
 public class DatabaseServiceProvider implements PersistentListServiceProvider {
 	private Log log = LogFactory.getLog(PersistentListServiceImpl.class);
 	private SessionFactory sessionFactory;
 
+	@Autowired
 	public DatabaseServiceProvider(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
