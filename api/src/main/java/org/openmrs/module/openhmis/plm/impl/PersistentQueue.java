@@ -18,15 +18,20 @@ public class PersistentQueue extends PersistentListBase<LinkedList<PersistentLis
 	}
 
 	/**
-	 *
-	 * @return
-	 * @should return next item from the list in last-in, first-out order
+	 * Gets the next {@link PersistentListItem} without removing the item from the list.
+	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
+	 * @should Return the next item in first in first out order
 	 */
 	@Override
 	public PersistentListItem getNext() {
 		return cachedItems.peek();
 	}
 
+	/**
+	 * Gets the next {@link PersistentListItem} and removes it from the list.
+	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
+	 * @should Return the next item in first in first out order
+	 */
 	@Override
 	public PersistentListItem getNextAndRemove() {
 		if (cachedItems.size() == 0) {

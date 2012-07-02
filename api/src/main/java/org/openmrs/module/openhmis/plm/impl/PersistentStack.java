@@ -20,6 +20,11 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 		super(id, key, provider);
 	}
 
+	/**
+	 * Gets the next {@link PersistentListItem} without removing the item from the list.
+	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
+	 * @should Return items in last in first out order
+	 */
 	@Override
 	public PersistentListItem getNext() {
 		if (cachedItems.size() == 0) {
@@ -29,6 +34,11 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 		}
 	}
 
+	/**
+	 * Gets the next {@link PersistentListItem} and removes it from the list.
+	 * @return The next {@link PersistentListItem}.
+	 * @should Return items in last in first out order
+	 */
 	@Override
 	public PersistentListItem getNextAndRemove() {
 		if (cachedItems.size() == 0) {
@@ -38,13 +48,18 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 		}
 	}
 
+	/**
+	 * Gets all the {@link PersistentListItem}'s in the list in last-in, first-out order.
+	 * @return The list {@link PersistentListItem}'s.
+	 * @should Return the items in last in first out order
+	 */
 	@Override
 	public PersistentListItem[] getItems() {
 		//The items must be reversed so that the first item is at index 0
 		List<PersistentListItem> list = Arrays.asList(super.getItems());
 		Collections.reverse(list);
 
-		return list.toArray(new PersistentListItem[0]);
+		return list.toArray(new PersistentListItem[list.size()]);
 	}
 
 	@Override
