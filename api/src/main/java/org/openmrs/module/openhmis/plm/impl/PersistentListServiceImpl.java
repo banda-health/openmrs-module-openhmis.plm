@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
+/**
 	This type is a synchronized list manager.  Read operations are not synchronized so that they operate as fast as
 	possible while ensureList may acquire a lock if the list is new and removeList will always acquire a lock if the
 	list is found.
@@ -23,7 +23,6 @@ import java.util.Map;
 public class PersistentListServiceImpl implements PersistentListService {
 	private final Log log = LogFactory.getLog(PersistentListServiceImpl.class);
 	private final Object syncLock = new Object();
-	private final Object eventLock = new Object();
 
 	private Map<String, PersistentList> lists = new HashMap<String, PersistentList>();
 	private FireableEventListenerList listenerList = new FireableEventListenerList();
@@ -66,10 +65,12 @@ public class PersistentListServiceImpl implements PersistentListService {
 	 * @should not add or update new list when existing key
 	 * @should return list by key
 	 * @should return null for undefined keys
+	 * @should allow a key that is less than 250 characters
 	 * @should throw IllegalArgumentException with empty key
 	 * @should throw IllegalArgumentException with null key
 	 * @should throw IllegalStateException when called before service is loaded
 	 * @should not fire listAdded event when list already exists
+	 * @should throw IllegalArgumentException if key is longer than 250 characters
 	 */
 	@Override
     public <T extends PersistentList> PersistentList ensureList(Class<T> listClass, String key, String description) {
@@ -114,7 +115,9 @@ public class PersistentListServiceImpl implements PersistentListService {
 	 * @should add a new list
 	 * @should fire the list added event
 	 * @should reference the correct service and list on list added event
+	 * @should allow a key that is less than 250 characters
 	 * @should throw IllegalStateException when called before service is loaded
+	 * @should throw IllegalArgumentException if key is longer than 250 characters
 	 */
 	@Override
 	public <T extends PersistentList> PersistentList createList(Class<T> listClass, String key, String description) {

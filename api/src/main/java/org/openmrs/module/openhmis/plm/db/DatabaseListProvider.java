@@ -19,32 +19,58 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A {@link PersistentListProvider} which stores items in a database.
+ */
 @Component
 public class DatabaseListProvider implements PersistentListProvider {
 	private static final String ADD_SQL =
-			"UPDATE plm_list_items SET primary_order = primary_order + 1 WHERE list_id = ? AND primary_order >= ?";
+		"UPDATE plm_list_items SET primary_order = primary_order + 1 WHERE list_id = ? AND primary_order >= ?";
 	private static final String REMOVE_SQL =
-			"UPDATE plm_list_items SET primary_order = primary_order - 1 WHERE list_id = ? AND primary_order >= ?";
+		"UPDATE plm_list_items SET primary_order = primary_order - 1 WHERE list_id = ? AND primary_order >= ?";
 	private static final String CLEAR_SQL = "DELETE FROM plm_list_items WHERE list_id = ?";
 
-	private Log log = LogFactory.getLog(PersistentListServiceImpl.class);
+	private final Log log = LogFactory.getLog(PersistentListServiceImpl.class);
+	private final Object syncLock = new Object();
+
 	private SessionFactory sessionFactory;
 
+	/**
+	 * Creates a new DatabaseListProvider instance with the specified hibernate {@link SessionFactory}.
+	 * @param sessionFactory The {@link SessionFactory} used to create the connection to the database.
+	 */
 	@Autowired
 	public DatabaseListProvider(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 
+	/**
+	 * Gets the name of the serviceProvider.
+	 * @return The name of the serviceProvider.
+	 */
 	@Override
 	public String getName() {
 		return "Database List Provider";
 	}
 
+	/**
+	 * Gets the description of the serviceProvider.
+	 * @return The description of the serviceProvider.
+	 */
 	@Override
 	public String getDescription() {
 		return "A persistent list serviceProvider that stores items in an OpenMRS database.";
 	}
 
+	/**
+	 * Adds a new item to the list.
+	 * @param item The item to add.
+	 * @should add the item to the database
+	 * @should correctly update the index of the other items in the table
+	 * @should throw PersistentListException when the command returns 0 rows updated
+	 * @should roll back the transaction when the operation fails
+	 * @shold commit the transaction if no operations fail
+	 */
 	@Override
 	public void add(final PersistentListItemModel item) {
 		Session session = sessionFactory.getCurrentSession();
@@ -61,7 +87,7 @@ public class DatabaseListProvider implements PersistentListProvider {
 				public void execute(Connection connection) {
 					try {
 						PreparedStatement cmd = connection.prepareStatement(ADD_SQL);
-						cmd.setInt(1, item.getItemId());
+						cmd.setInt(1, item.getListId());
 						cmd.setInt(2, item.getPrimaryOrder());
 
 						cmd.executeUpdate();
@@ -88,6 +114,11 @@ public class DatabaseListProvider implements PersistentListProvider {
 		}
 	}
 
+	/**
+	 * Removes the specified item from the list.
+	 * @param item The item to remove.
+	 * @return {@code true} if the item was removed; otherwise, {@code false}.
+	 */
 	@Override
 	public boolean remove(final PersistentListItemModel item) {
 		Session session = sessionFactory.getCurrentSession();
@@ -108,7 +139,7 @@ public class DatabaseListProvider implements PersistentListProvider {
 				public void execute(Connection connection) {
 					try {
 						PreparedStatement cmd = connection.prepareStatement(REMOVE_SQL);
-						cmd.setInt(1, item.getItemId());
+						cmd.setInt(1, item.getListId());
 						cmd.setInt(2, item.getPrimaryOrder());
 
 						cmd.executeUpdate();
@@ -133,6 +164,10 @@ public class DatabaseListProvider implements PersistentListProvider {
 		return true;
 	}
 
+	/**
+	 * Removes all items from the specified list.
+	 * @param list The list to clear.
+	 */
 	@Override
 	public void clear(final PersistentList list) {
 		Session session = sessionFactory.getCurrentSession();
@@ -158,6 +193,11 @@ public class DatabaseListProvider implements PersistentListProvider {
 		}
 	}
 
+	/**
+	 * Gets all the items from the list in order.
+	 * @param list The @see PersistentList to get.
+	 * @return The items in the list.
+	 */
 	@Override
 	public PersistentListItemModel[] getItems(PersistentList list) {
 		List<PersistentListItemModel> result = null;

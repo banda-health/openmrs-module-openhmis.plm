@@ -149,6 +149,16 @@ public class PersistentListServiceImplTest {
 	}
 
 	/**
+	 * @verifies allow a key that is less than 250 characters
+	 * @see PersistentListServiceImpl#createList(Class, String, String)
+	 */
+	@Test
+	public void createList_shouldAllowAKeyThatIsLessThan250Characters() throws Exception {
+		//TODO auto-generated
+		Assert.fail("Not yet implemented");
+	}
+
+	/**
 	 * @verifies throw IllegalStateException when called before service is loaded
 	 * @see PersistentListServiceImpl#createList(Class, String, String)
 	 */
@@ -158,6 +168,16 @@ public class PersistentListServiceImplTest {
 
 		Assert.assertEquals(false, impl.getIsLoaded());
 		impl.createList(TestPersistentList.class, "test", "");
+	}
+
+	/**
+	 * @verifies throw IllegalArgumentException if key is longer than 250 characters
+	 * @see PersistentListServiceImpl#createList(Class, String, String)
+	 */
+	@Test
+	public void createList_shouldThrowIllegalArgumentExceptionIfKeyIsLongerThan250Characters() throws Exception {
+		//TODO auto-generated
+		Assert.fail("Not yet implemented");
 	}
 
 	/**
@@ -239,11 +259,21 @@ public class PersistentListServiceImplTest {
 	}
 
 	/**
+	 * @verifies allow a key that is less than 250 characters
+	 * @see PersistentListServiceImpl#ensureList(Class, String, String)
+	 */
+	@Test
+	public void ensureList_shouldAllowAKeyThatIsLessThan250Characters() throws Exception {
+		//TODO auto-generated
+		Assert.fail("Not yet implemented");
+	}
+
+	/**
 	 * @verifies throw IllegalArgumentException with empty key
 	 * @see PersistentListServiceImpl#ensureList(Class, String, String)
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void ensureList_throwIllegalArgumentExceptionWithEmptyKey() {
+	public void ensureList_shouldThrowIllegalArgumentExceptionWithEmptyKey() throws Exception {
 		when(serviceProvider.getLists()).thenReturn(new PersistentListModel[0]);
 		service.onStartup();
 
@@ -256,7 +286,7 @@ public class PersistentListServiceImplTest {
 	 * @see PersistentListServiceImpl#ensureList(Class, String, String)
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void ensureList_throwIllegalArgumentExceptionWithNullKey() {
+	public void ensureList_shouldThrowIllegalArgumentExceptionWithNullKey() throws Exception {
 		when(serviceProvider.getLists()).thenReturn(new PersistentListModel[0]);
 		service.onStartup();
 
@@ -298,6 +328,16 @@ public class PersistentListServiceImplTest {
 		// No additions should have been fired
 		Assert.assertEquals(0, listener.added);
 		Assert.assertEquals(0, listener.removed);
+	}
+
+	/**
+	 * @verifies throw IllegalArgumentException if key is longer than 250 characters
+	 * @see PersistentListServiceImpl#ensureList(Class, String, String)
+	 */
+	@Test
+	public void ensureList_shouldThrowIllegalArgumentExceptionIfKeyIsLongerThan250Characters() throws Exception {
+		//TODO auto-generated
+		Assert.fail("Not yet implemented");
 	}
 
 	/**
@@ -419,7 +459,7 @@ public class PersistentListServiceImplTest {
 	 * @see PersistentListServiceImpl#getList(String)
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void getList_throwIllegalArgumentExceptionWithEmptyKey() {
+	public void getList_shouldThrowIllegalArgumentExceptionWithEmptyKey() throws Exception {
 		when(serviceProvider.getLists()).thenReturn(new PersistentListModel[0]);
 		service.onStartup();
 
@@ -432,7 +472,7 @@ public class PersistentListServiceImplTest {
 	 * @see PersistentListServiceImpl#getList(String)
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void getList_throwIllegalArgumentExceptioWithNullKey() {
+	public void getList_shouldThrowIllegalArgumentExceptionWithNullKey() throws Exception {
 		when(serviceProvider.getLists()).thenReturn(new PersistentListModel[0]);
 		service.onStartup();
 

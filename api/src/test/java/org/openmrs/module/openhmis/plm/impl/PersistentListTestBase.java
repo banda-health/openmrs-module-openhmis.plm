@@ -1,6 +1,7 @@
 package org.openmrs.module.openhmis.plm.impl;
 
 import junit.framework.Assert;
+import liquibase.util.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.openhmis.plm.*;
@@ -115,12 +116,35 @@ public abstract class PersistentListTestBase {
 	 * @see org.openmrs.module.openhmis.plm.PersistentList#add(org.openmrs.module.openhmis.plm.PersistentListItem...)
 	 */
 	@Test(expected = PersistentListException.class)
-	public void shouldThrowExceptionWhenDuplicateItemsAreAdded() {
+	public void add_shouldThrowExceptionWhenDuplicateItemsAreAdded() {
 		PersistentListItem item1 = new PersistentListItem("1", null);
 		PersistentListItem item2 = new PersistentListItem("1", null);
 
 		list.add(item1);
 		list.add(item2);
+	}
+
+	/** @verifies Allow a key that is less than 250 characters
+	 * @see org.openmrs.module.openhmis.plm.PersistentList#add(org.openmrs.module.openhmis.plm.PersistentListItem...)
+	 */
+	public void add_AllowAKeyThatIsLessThan250Characters() {
+		PersistentListItem item1 = new PersistentListItem("A", null);
+		PersistentListItem item2 = new PersistentListItem(StringUtils.repeat("A", 250), null);
+
+		list.add(item1);
+		list.add(item2);
+	}
+
+	/**
+	 * @verifies throw IllegalArgumentException if item key is longer than 250 characters
+	 * @see org.openmrs.module.openhmis.plm.PersistentList#add(org.openmrs.module.openhmis.plm.PersistentListItem...)
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void add_shouldThrowIllegalArgumentExceptionIfItemKeyIsLongerThan250Characters() {
+		String key = StringUtils.repeat("A", 251);
+		PersistentListItem item1 = new PersistentListItem("1", null);
+
+		list.add(item1);
 	}
 
 	/**

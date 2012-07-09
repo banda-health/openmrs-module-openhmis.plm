@@ -57,6 +57,8 @@ public interface PersistentList {
 	 * @should Fire the itemAdded event
 	 * @should Fire the itemAdded event for each item added
 	 * @should Reference the correct list and item when firing the itemAdded event
+	 * @should Allow a key that is less than 250 characters
+	 * @should Throw IllegalArgumentException if item key is longer than 250 characters
 	 */
 	void add(PersistentListItem... items);
 

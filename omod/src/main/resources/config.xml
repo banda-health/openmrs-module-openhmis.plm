@@ -7,7 +7,7 @@
 	<name>${project.parent.name}</name>
 	<version>${project.parent.version}</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
-	<author>Wes Brown</author>
+	<author>OpenHMIS Team</author>
 	<description>
 		${project.parent.description}
 	</description>

@@ -13,7 +13,7 @@ public interface PersistentListProvider {
     String getName();
 
 	/**
-	 * Gets a description of the serviceProvider.
+	 * Gets the description of the serviceProvider.
 	 * @return The description of the serviceProvider.
 	 */
     String getDescription();
