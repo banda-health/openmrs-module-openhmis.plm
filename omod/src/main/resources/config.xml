@@ -7,13 +7,13 @@
 	<name>${project.parent.name}</name>
 	<version>${project.parent.version}</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
-	<author>OpenHMIS Team</author>
+	<author>OpenHMIS</author>
 	<description>
 		${project.parent.description}
 	</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
 	<require_version>${openMRSVersion}</require_version>
-
+♦
 	<!-- / Module Properties -->
 	
 	<!-- Module Activator -->

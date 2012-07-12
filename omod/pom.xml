@@ -4,11 +4,11 @@
 
 	<parent>
 		<groupId>org.openmrs.module</groupId>
-		<artifactId>openhmis-plm</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<artifactId>openhmis.plm</artifactId>
+		<version>0.5-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>openhmis-plm-omod</artifactId>
+	<artifactId>${project.parent.artifactId}-omod</artifactId>
 	<packaging>jar</packaging>
 	<name>OpenHMIS Persistent List Manager Module OMOD</name>
 	<description>OMOD project for the Persistent List Manager module</description>

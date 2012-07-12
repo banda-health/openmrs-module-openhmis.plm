@@ -35,6 +35,8 @@ import java.util.List;
  * @param <T> The collection type for the list implementation.
  */
 public abstract class PersistentListBase<T extends Collection<PersistentListItem>> implements PersistentList, Initializable {
+	public final static int MAX_ITEM_KEY_LENGTH = 250;
+
 	private Log log = LogFactory.getLog(PersistentListBase.class);
 
 	protected final Object syncLock = new Object();
@@ -145,12 +147,15 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	@Override
 	public void add(PersistentListItem... items) {
 		PersistentListItem item = null;
-		try{
+		try {
 			synchronized (syncLock) {
 				for (PersistentListItem listItem : items) {
 					// Store the reference to the current item (in case of an exception)
 					item = listItem;
 
+					if (item.getKey().length() > MAX_ITEM_KEY_LENGTH) {
+						throw new IllegalArgumentException("The item key must be " + MAX_ITEM_KEY_LENGTH + " characters or less.");
+					}
 					if (itemKeys.contains(item.getKey())) {
 						throw new IllegalArgumentException("An item with the key '" + item.getKey() + "' has already been added to this persistent list.");
 					}
@@ -246,12 +251,12 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 
 	protected PersistentListItem createItem(PersistentListItemModel model) {
 		return new PersistentListItem(model.getItemId(), model.getItemKey(),
-				model.getCreator(), model.getCreatedOn());
+				model.getCreator(), model.getDateCreated());
 	}
 
 	protected PersistentListItemModel createItemModel(PersistentListItem item) {
-		return new PersistentListItemModel(this, item.getKey(), getItemIndex(item), null, null,
-				item.getCreator(), item.getCreatedOn());
+		return new PersistentListItemModel(this, item.getKey(), getItemIndex(item), item.getCreator(),
+				item.getCreatedOn());
 	}
 
 	protected void fireListEvent(final ListEvent event) {

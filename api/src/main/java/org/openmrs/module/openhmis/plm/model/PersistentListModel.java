@@ -19,29 +19,27 @@ import java.util.Date;
 public class PersistentListModel {
 	private Integer listId;
 	private String key;
-	private String listClass;
+	private String listProvider;
 	private String description;
-	private Date createdOn;
+	private Date dateCreated;
 
 	PersistentListModel() {
 	}
 
-	public PersistentListModel(Integer listId, String key, String listClass, String description,
-	                           Date createdOn) {
+	public PersistentListModel(Integer listId, String key, String listProvider, String description, Date dateCreated) {
 		this.listId = listId;
 		this.key = key;
-		this.listClass = listClass;
+		this.listProvider = listProvider;
 		this.description = description;
-
-		this.createdOn = createdOn;
+		this.dateCreated = dateCreated;
 	}
 
-	public String getListClass() {
-		return listClass;
+	public String getListProvider() {
+		return listProvider;
 	}
 
-	public void setListClass(String listClass) {
-		this.listClass = listClass;
+	public void setListProvider(String listProvider) {
+		this.listProvider = listProvider;
 	}
 
 	public String getKey() {
@@ -60,12 +58,12 @@ public class PersistentListModel {
 		this.description = description;
 	}
 
-	public Date getCreatedOn() {
-		return createdOn;
+	public Date getDateCreated() {
+		return dateCreated;
 	}
 
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
 	public Integer getListId() {

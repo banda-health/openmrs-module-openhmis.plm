@@ -22,43 +22,29 @@ import java.util.Date;
 public class PersistentListItemModel {
 	private int listId;
 	private Integer itemId;
-	private int primaryOrder;
-	private Integer secondaryOrder;
-	private Integer tertiaryOrder;
+	private int itemOrder;
 	private String itemKey;
 	private User creator;
-	private Date createdOn;
+	private Date dateCreated;
 
-	public PersistentListItemModel(PersistentList list, String key, int primaryOrder, User creator) {
-		this(list.getId(), key, primaryOrder, null, null, creator, new Date());
+	public PersistentListItemModel(PersistentList list, String key, int itemOrder, User creator) {
+		this(list.getId(), key, itemOrder, creator, new Date());
 	}
 
-	public PersistentListItemModel(int listId, String key, int primaryOrder, User creator) {
-		this(listId, key, primaryOrder, null, null, creator, new Date());
+	public PersistentListItemModel(int listId, String key, int itemOrder, User creator) {
+		this(listId, key, itemOrder, creator, new Date());
 	}
 
-	public PersistentListItemModel(PersistentList list, String key, int primaryOrder, Integer secondaryOrder, User creator) {
-		this(list.getId(), key, primaryOrder, secondaryOrder, null, creator, new Date());
+	public PersistentListItemModel(PersistentList list, String key, int itemOrder, User creator, Date dateCreated) {
+		this(list.getId(), key, itemOrder, creator, dateCreated);
 	}
 
-	public PersistentListItemModel(PersistentList list, String key, int primaryOrder, Integer secondaryOrder, Integer tertiaryOrder, User creator) {
-		this(list.getId(), key, primaryOrder, secondaryOrder, tertiaryOrder, creator, new Date());
-	}
-
-	public PersistentListItemModel(PersistentList list, String key, int primaryOrder, Integer secondaryOrder, Integer tertiaryOrder,
-	                               User creator, Date createdOn) {
-		this(list.getId(), key, primaryOrder, secondaryOrder, tertiaryOrder, creator, createdOn);
-	}
-
-	public PersistentListItemModel(int listId, String key, int primaryOrder, Integer secondaryOrder, Integer tertiaryOrder,
-	                               User creator, Date createdOn) {
+	public PersistentListItemModel(int listId, String key, int itemOrder, User creator, Date dateCreated) {
 		this.listId = listId;
 		this.itemKey = key;
-		this.primaryOrder = primaryOrder;
-		this.secondaryOrder = secondaryOrder;
-		this.tertiaryOrder = tertiaryOrder;
+		this.itemOrder = itemOrder;
 		this.creator = creator;
-		this.createdOn = createdOn;
+		this.dateCreated = dateCreated;
 	}
 
 	public int getItemId() {
@@ -77,28 +63,12 @@ public class PersistentListItemModel {
 		this.listId = listId;
 	}
 
-	public int getPrimaryOrder() {
-		return primaryOrder;
+	public int getItemOrder() {
+		return itemOrder;
 	}
 
-	public void setPrimaryOrder(int primaryOrder) {
-		this.primaryOrder = primaryOrder;
-	}
-
-	public int getSecondaryOrder() {
-		return secondaryOrder;
-	}
-
-	public void setSecondaryOrder(int secondaryOrder) {
-		this.secondaryOrder = secondaryOrder;
-	}
-
-	public int getTertiaryOrder() {
-		return tertiaryOrder;
-	}
-
-	public void setTertiaryOrder(int tertiaryOrder) {
-		this.tertiaryOrder = tertiaryOrder;
+	public void setItemOrder(int itemOrder) {
+		this.itemOrder = itemOrder;
 	}
 
 	public String getItemKey() {
@@ -117,11 +87,11 @@ public class PersistentListItemModel {
 		this.creator = creator;
 	}
 
-	public Date getCreatedOn() {
-		return createdOn;
+	public Date getDateCreated() {
+		return dateCreated;
 	}
 
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 }

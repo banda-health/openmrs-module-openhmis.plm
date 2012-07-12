@@ -102,7 +102,7 @@ public class DatabaseListProvider implements PersistentListProvider {
 					try {
 						PreparedStatement cmd = connection.prepareStatement(ADD_SQL);
 						cmd.setInt(1, item.getListId());
-						cmd.setInt(2, item.getPrimaryOrder());
+						cmd.setInt(2, item.getItemOrder());
 
 						cmd.executeUpdate();
 					} catch (SQLException sex) {
@@ -154,7 +154,7 @@ public class DatabaseListProvider implements PersistentListProvider {
 					try {
 						PreparedStatement cmd = connection.prepareStatement(REMOVE_SQL);
 						cmd.setInt(1, item.getListId());
-						cmd.setInt(2, item.getPrimaryOrder());
+						cmd.setInt(2, item.getItemOrder());
 
 						cmd.executeUpdate();
 					} catch (SQLException sex) {

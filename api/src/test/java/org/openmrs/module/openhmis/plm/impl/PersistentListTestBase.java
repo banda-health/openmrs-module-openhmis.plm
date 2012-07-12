@@ -153,10 +153,10 @@ public abstract class PersistentListTestBase {
 	 * @verifies throw IllegalArgumentException if item key is longer than 250 characters
 	 * @see org.openmrs.module.openhmis.plm.PersistentList#add(org.openmrs.module.openhmis.plm.PersistentListItem...)
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = PersistentListException.class)
 	public void add_shouldThrowIllegalArgumentExceptionIfItemKeyIsLongerThan250Characters() {
 		String key = StringUtils.repeat("A", 251);
-		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item1 = new PersistentListItem(key, null);
 
 		list.add(item1);
 	}

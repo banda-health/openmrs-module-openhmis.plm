@@ -14,6 +14,7 @@
 
 package org.openmrs.module.openhmis.plm.impl;
 
+import liquibase.util.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -163,13 +164,20 @@ public class PersistentListServiceImplTest {
 	}
 
 	/**
-	 * @verifies allow a key that is less than 250 characters
+	 * @verifies allow a key that is less than 251 characters
 	 * @see PersistentListServiceImpl#createList(Class, String, String)
 	 */
 	@Test
-	public void createList_shouldAllowAKeyThatIsLessThan250Characters() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+	public void createList_shouldAllowAKeyThatIsLessThan251Characters() throws Exception {
+		when(serviceProvider.getLists()).thenReturn(new PersistentListModel[0]);
+		service.onStartup();
+
+		String key = StringUtils.repeat("A", 250);
+		String desc = "desc";
+
+		Assert.assertEquals(0, service.getLists().length);
+		service.createList(TestPersistentList.class, key, desc);
+		assertList(TestPersistentList.class, key, desc);
 	}
 
 	/**
@@ -188,10 +196,14 @@ public class PersistentListServiceImplTest {
 	 * @verifies throw IllegalArgumentException if key is longer than 250 characters
 	 * @see PersistentListServiceImpl#createList(Class, String, String)
 	 */
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void createList_shouldThrowIllegalArgumentExceptionIfKeyIsLongerThan250Characters() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		when(serviceProvider.getLists()).thenReturn(new PersistentListModel[0]);
+		service.onStartup();
+
+		String key = StringUtils.repeat("A", 251);
+
+		service.createList(TestPersistentList.class, key, null);
 	}
 
 	/**
@@ -273,13 +285,20 @@ public class PersistentListServiceImplTest {
 	}
 
 	/**
-	 * @verifies allow a key that is less than 250 characters
+	 * @verifies allow a key that is less than 251 characters
 	 * @see PersistentListServiceImpl#ensureList(Class, String, String)
 	 */
 	@Test
-	public void ensureList_shouldAllowAKeyThatIsLessThan250Characters() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+	public void ensureList_shouldAllowAKeyThatIsLessThan251Characters() throws Exception {
+		when(serviceProvider.getLists()).thenReturn(new PersistentListModel[0]);
+		service.onStartup();
+
+		String key = StringUtils.repeat("A", 250);
+		String desc = "desc";
+
+		Assert.assertEquals(0, service.getLists().length);
+		service.ensureList(TestPersistentList.class, key, desc);
+		assertList(TestPersistentList.class, key, desc);
 	}
 
 	/**
@@ -348,10 +367,15 @@ public class PersistentListServiceImplTest {
 	 * @verifies throw IllegalArgumentException if key is longer than 250 characters
 	 * @see PersistentListServiceImpl#ensureList(Class, String, String)
 	 */
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void ensureList_shouldThrowIllegalArgumentExceptionIfKeyIsLongerThan250Characters() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		when(serviceProvider.getLists()).thenReturn(new PersistentListModel[0]);
+		service.onStartup();
+
+		String key = StringUtils.repeat("A", 251);
+
+		Assert.assertEquals(0, service.getLists().length);
+		service.createList(TestPersistentList.class, key, null);
 	}
 
 	/**
@@ -617,7 +641,7 @@ public class PersistentListServiceImplTest {
 	private void assertListModel(PersistentListModel model, PersistentList list) {
 		Assert.assertEquals(model.getListId(), list.getId());
 		Assert.assertEquals(model.getKey(), list.getKey());
-		Assert.assertEquals(model.getListClass(), list.getClass().getName());
+		Assert.assertEquals(model.getListProvider(), list.getClass().getName());
 		Assert.assertEquals(model.getDescription(), list.getDescription());
 	}
 

@@ -35,6 +35,8 @@ import java.util.Map;
 	list is found.
  */
 public class PersistentListServiceImpl implements PersistentListService {
+	public final static int MAX_LIST_KEY_LENGTH = 250;
+
 	private final Log log = LogFactory.getLog(PersistentListServiceImpl.class);
 	private final Object syncLock = new Object();
 
@@ -79,7 +81,7 @@ public class PersistentListServiceImpl implements PersistentListService {
 	 * @should not add or update new list when existing key
 	 * @should return list by key
 	 * @should return null for undefined keys
-	 * @should allow a key that is less than 250 characters
+	 * @should allow a key that is less than 251 characters
 	 * @should throw IllegalArgumentException with empty key
 	 * @should throw IllegalArgumentException with null key
 	 * @should throw IllegalStateException when called before service is loaded
@@ -98,6 +100,9 @@ public class PersistentListServiceImpl implements PersistentListService {
 	    if (StringUtils.isEmpty(key)) {
 		    throw new IllegalArgumentException("The list must have a key.");
 	    }
+		if (key.length() > MAX_LIST_KEY_LENGTH) {
+			throw new IllegalArgumentException("The list key must be " + MAX_LIST_KEY_LENGTH + " characters or less.");
+		}
 
         //Check to see if plm has already been defined
 	    PersistentList list = lists.get(key);
@@ -129,7 +134,7 @@ public class PersistentListServiceImpl implements PersistentListService {
 	 * @should add a new list
 	 * @should fire the list added event
 	 * @should reference the correct service and list on list added event
-	 * @should allow a key that is less than 250 characters
+	 * @should allow a key that is less than 251 characters
 	 * @should throw IllegalStateException when called before service is loaded
 	 * @should throw IllegalArgumentException if key is longer than 250 characters
 	 */
@@ -144,6 +149,9 @@ public class PersistentListServiceImpl implements PersistentListService {
 		}
 		if (StringUtils.isEmpty(key)) {
 			throw new IllegalArgumentException("The list must have a key.");
+		}
+		if (key.length() > MAX_LIST_KEY_LENGTH) {
+			throw new IllegalArgumentException("The list key must be " + MAX_LIST_KEY_LENGTH + " characters or less.");
 		}
 
 		log.debug("Creating the '" + key + "' list...");
@@ -315,9 +323,9 @@ public class PersistentListServiceImpl implements PersistentListService {
 
 		// Load the list class
 		try {
-			listClass = Class.forName(model.getListClass());
+			listClass = Class.forName(model.getListProvider());
 		} catch (Exception ex) {
-			log.error("Could not load the '" + model.getListClass() + "' list type.", ex);
+			log.error("Could not load the '" + model.getListProvider() + "' list type.", ex);
 		}
 
 		if (listClass == null) {

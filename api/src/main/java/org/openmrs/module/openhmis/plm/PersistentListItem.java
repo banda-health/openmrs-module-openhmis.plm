@@ -30,7 +30,7 @@ public class PersistentListItem {
 	}
 
 	public PersistentListItem(PersistentListItemModel model) {
-		this(model.getItemId(), model.getItemKey(), model.getCreator(), model.getCreatedOn());
+		this(model.getItemId(), model.getItemKey(), model.getCreator(), model.getDateCreated());
 	}
 
 	public PersistentListItem(String key) {
