@@ -255,7 +255,7 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	}
 
 	protected PersistentListItemModel createItemModel(PersistentListItem item) {
-		return new PersistentListItemModel(this, item.getKey(), getItemIndex(item), item.getCreator(),
+		return new PersistentListItemModel(this, item.getKey(), getItemIndex(item), null, item.getCreator(),
 				item.getCreatedOn());
 	}
 
