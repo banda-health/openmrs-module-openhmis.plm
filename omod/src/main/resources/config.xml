@@ -6,7 +6,7 @@
 	<id>${project.parent.artifactId}</id>
 	<name>${project.parent.name}</name>
 	<version>${project.parent.version}</version>
-	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
+	<package>${project.parent.groupId}.${modulePackage}</package>
 	<author>OpenHMIS</author>
 	<description>
 		${project.parent.description}
@@ -17,13 +17,13 @@
 	<!-- / Module Properties -->
 	
 	<!-- Module Activator -->
-	<activator>${project.parent.groupId}.${project.parent.artifactId}.PersistentListManagerModuleActivator</activator>
+	<activator>${project.parent.groupId}.${modulePackage}.PersistentListManagerModuleActivator</activator>
 	
 	
 	<!-- Adds link to admin page -->
 	<extension>
 		<point>org.openmrs.admin.queue</point>
-		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
+		<class>${project.parent.groupId}.${modulePackage}.extension.html.AdminList</class>
 	</extension>
 	
 	<!-- Maps hibernate file's, if present -->
