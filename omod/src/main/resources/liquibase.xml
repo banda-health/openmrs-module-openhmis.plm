@@ -42,6 +42,9 @@
 		    <column name="item_order" type="int">
 			    <constraints nullable="false" />
 		    </column>
+		    <column name="custom_order" type="varchar(500)">
+			    <constraints nullable="true" />
+		    </column>
 		    <column name="creator" type="int">
 			    <constraints nullable="false" />
 		    </column>

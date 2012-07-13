@@ -22,27 +22,21 @@ import java.util.Date;
 public class PersistentListItemModel {
 	private int listId;
 	private Integer itemId;
-	private int itemOrder;
 	private String itemKey;
+	private int itemOrder;
+	private String customOrder;
 	private User creator;
 	private Date dateCreated;
 
-	public PersistentListItemModel(PersistentList list, String key, int itemOrder, User creator) {
-		this(list.getId(), key, itemOrder, creator, new Date());
+	public PersistentListItemModel(PersistentList list, String key, int itemOrder, String customOrder, User creator, Date dateCreated) {
+		this(list.getId(), key, itemOrder, customOrder, creator, dateCreated);
 	}
 
-	public PersistentListItemModel(int listId, String key, int itemOrder, User creator) {
-		this(listId, key, itemOrder, creator, new Date());
-	}
-
-	public PersistentListItemModel(PersistentList list, String key, int itemOrder, User creator, Date dateCreated) {
-		this(list.getId(), key, itemOrder, creator, dateCreated);
-	}
-
-	public PersistentListItemModel(int listId, String key, int itemOrder, User creator, Date dateCreated) {
+	public PersistentListItemModel(int listId, String key, int itemOrder, String customOrder, User creator, Date dateCreated) {
 		this.listId = listId;
 		this.itemKey = key;
 		this.itemOrder = itemOrder;
+		this.customOrder = customOrder;
 		this.creator = creator;
 		this.dateCreated = dateCreated;
 	}
@@ -93,5 +87,13 @@ public class PersistentListItemModel {
 
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
+	}
+
+	public String getCustomOrder() {
+		return customOrder;
+	}
+
+	public void setCustomOrder(String customOrder) {
+		this.customOrder = customOrder;
 	}
 }
