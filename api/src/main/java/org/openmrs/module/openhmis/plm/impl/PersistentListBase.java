@@ -22,6 +22,7 @@ import org.openhmis.commons.Initializable;
 import org.openmrs.module.openhmis.plm.*;
 import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
 import org.openmrs.module.openhmis.plm.model.PersistentListModel;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,11 +70,11 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 		this.provider = provider;
 	}
 
-	@Override
-	public abstract PersistentListItem getNext();
-
-	@Override
-	public abstract PersistentListItem getNextAndRemove();
+	/**
+	 * Implementors must create the logic needed to get the 'next' item in the list.
+	 * @return The next item in the list or {@code null} if there are no more items.
+	 */
+	protected abstract PersistentListItem getNextItem();
 
 	protected abstract T initializeCache();
 	protected abstract int getItemIndex(PersistentListItem item);
@@ -144,6 +145,10 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 		return cachedItems.size();
 	}
 
+	/**
+	 *
+	 * @param items The {@link PersistentListItem}'s to add.
+	 */
 	@Override
 	public void add(PersistentListItem... items) {
 		PersistentListItem item = null;
@@ -154,10 +159,12 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 					item = listItem;
 
 					if (item.getKey().length() > MAX_ITEM_KEY_LENGTH) {
-						throw new IllegalArgumentException("The item key must be " + MAX_ITEM_KEY_LENGTH + " characters or less.");
+						throw new IllegalArgumentException("The item key must be " + MAX_ITEM_KEY_LENGTH +
+								" characters or less.");
 					}
 					if (itemKeys.contains(item.getKey())) {
-						throw new IllegalArgumentException("An item with the key '" + item.getKey() + "' has already been added to this persistent list.");
+						throw new PersistentListException("An item with the key '" + item.getKey() +
+								"' has already been added to this persistent list.");
 					}
 
 					// Add the item to the cached items
@@ -178,31 +185,30 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 			// If there was an exception while trying to add an item ensure that it is no longer in the cache.
 			cachedItems.remove(item);
 
-			/*
-			TODO: Should the item be removed from the serviceProvider as well, or it is safe to assume that exceptions
-				can only occur before the item is added to the serviceProvider?
-			*/
-
-			/*
-			 TODO: Given that a serviceProvider could throw pretty much any exception type (DB, file system, network, etc),
-			    is it ok to just rethrow it as an Exception?
-			*/
-
-			throw new PersistentListException(ex);
+			if (ex instanceof IllegalArgumentException) {
+				throw (IllegalArgumentException)ex;
+			} else if (ex instanceof PersistentListException) {
+				throw (PersistentListException)ex;
+			} else {
+				throw new PersistentListException(ex);
+			}
 		}
 	}
 
 	@Override
+	public void insert(PersistentListItem item, int index) {
+		throw new NotImplementedException();
+	}
+
+	@Override
 	public boolean remove(PersistentListItem item) {
-		Boolean wasRemovedFromProvider, wasRemovedFromCache;
+		Boolean wasRemoved;
 		synchronized (syncLock) {
-			wasRemovedFromProvider = provider.remove(createItemModel(item));
-			wasRemovedFromCache = cachedItems.remove(item);
-			itemKeys.remove(item.getKey());
+			wasRemoved = removeItem(item);
 		}
 
 		// Fire the remove event outside of the synchronized block
-		if (wasRemovedFromProvider || wasRemovedFromCache) {
+		if (wasRemoved) {
 			fireListEvent(new ListEvent(this, item, ListEvent.ListOperation.REMOVED));
 
 			return true;
@@ -225,6 +231,39 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	@Override
 	public PersistentListItem[] getItems() {
 		return cachedItems.toArray(new PersistentListItem[cachedItems.size()]);
+	}
+
+	@Override
+	public PersistentListItem getItemAt(int index) {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public PersistentListItem getNext() {
+		synchronized (syncLock) {
+			return getNextItem();
+		}
+	}
+
+
+	@Override
+	public PersistentListItem getNextAndRemove() {
+		PersistentListItem result;
+		boolean wasRemoved = false;
+
+		synchronized (syncLock) {
+			result = getNextItem();
+
+			if (result != null) {
+				wasRemoved = removeItem(result);
+			}
+		}
+
+		if (wasRemoved) {
+			fireListEvent(new ListEvent(this, result, ListEvent.ListOperation.REMOVED));
+		}
+
+		return result;
 	}
 
 	@Override
@@ -257,6 +296,15 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	protected PersistentListItemModel createItemModel(PersistentListItem item) {
 		return new PersistentListItemModel(this, item.getKey(), getItemIndex(item), null, item.getCreator(),
 				item.getCreatedOn());
+	}
+
+	protected boolean removeItem(PersistentListItem item) {
+		boolean wasRemovedFromProvider = provider.remove(createItemModel(item));
+		boolean wasRemovedFromCache = cachedItems.remove(item);
+
+		itemKeys.remove(item.getKey());
+
+		return wasRemovedFromProvider || wasRemovedFromCache;
 	}
 
 	protected void fireListEvent(final ListEvent event) {

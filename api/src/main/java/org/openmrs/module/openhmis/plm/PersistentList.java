@@ -65,6 +65,8 @@ public interface PersistentList {
 	/**
 	 * Adds new {@link PersistentListItem} to the list.
 	 * @param items The {@link PersistentListItem}'s to add.
+	 * @throws PersistentListException
+	 * @throws IllegalArgumentException
 	 * @should Add a single item
 	 * @should Add multiple items
 	 * @should throw PersistentListException when duplicate items are added
@@ -73,8 +75,26 @@ public interface PersistentList {
 	 * @should Reference the correct list and item when firing the itemAdded event
 	 * @should Allow a key that is less than 250 characters
 	 * @should Throw IllegalArgumentException if item key is longer than 250 characters
+	 * @should Block list operations on other threads until complete
 	 */
 	void add(PersistentListItem... items);
+
+	/**
+	 * Inserts a new {@link PersistentListItem} to the list at the specified index.
+	 * @param item The {@link PersistentListItem} to insert.
+	 * @param index The index where the item will be inserted.
+	 * @should throw IllegalArgumentException if the index is less than zero
+	 * @should insert the item at the end of the list if the index is larger than the list size
+	 * @should insert the item at the specified index and move the existing items
+	 * @should update each moved item via the list provider
+	 * @should throw PersistentListException when a duplicate item is inserted
+	 * @should Fire the itemAdded event with the index
+	 * @should Reference the correct list and item when firing the itemAdded event
+	 * @should Allow a key that is less than 250 characters
+	 * @should Throw IllegalArgumentException if item key is longer than 250 characters
+	 * @should Block list operations on other threads until complete
+	 */
+	void insert(PersistentListItem item, int index);
 
 	/**
 	 * Removes the specified {@link PersistentListItem} from the list.
@@ -86,6 +106,7 @@ public interface PersistentList {
 	 * @should Fire the itemRemoved event
 	 * @should Not fire the itemRemoved event for items not found in the list
 	 * @should Reference the correct list and item when firing the itemRemoved event
+	 * @should Block list operations on other threads until complete
 	 */
 	boolean remove(PersistentListItem item);
 
@@ -95,6 +116,7 @@ public interface PersistentList {
 	 * @should Not throw an exception when list is empty
 	 * @should Fire the listCleared event
 	 * @should Reference the correct list when firing the listCleared event
+	 * @should Block list operations on other threads until complete
 	 */
 	void clear();
 
@@ -103,8 +125,21 @@ public interface PersistentList {
 	 * @return The list {@link PersistentListItem}'s.
 	 * @should Return items that have been added
 	 * @should Return all list items
+	 * @should Block list operations on other threads until complete
 	 */
 	PersistentListItem[] getItems();
+
+	/**
+	 * Gets the {@link PersistentListItem} at the specified index.
+	 * @param index The index of the item to get.
+	 * @return The {@link PersistentListItem} or {@code null} if there is no item at the specified index.
+	 * @should Return the item at the specified index
+	 * @should Return null when there is no item at the specified index
+	 * @should Throw IllegalArgumentException when the index is less than zero
+	 * @should Return null if the index is larger than or equal to the list size
+	 * @should Block list operations on other threads until complete
+	 */
+	PersistentListItem getItemAt(int index);
 
 	/**
 	 * Gets the next {@link PersistentListItem} as defined by the list implementation without removing the item
@@ -112,6 +147,7 @@ public interface PersistentList {
 	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
 	 * @should Not remove item from list
 	 * @should Return null when list is empty
+	 * @should Block list operations on other threads until complete
 	 */
 	PersistentListItem getNext();
 
@@ -120,6 +156,8 @@ public interface PersistentList {
 	 * @return The next {@link PersistentListItem}.
 	 * @should Return and remove item
 	 * @should Return null when list is empty
+	 * @should Fire the itemRemoved event
+	 * @should Block list operations on other threads until complete
 	 */
 	PersistentListItem getNextAndRemove();
 
@@ -128,6 +166,7 @@ public interface PersistentList {
 	 * @return The number of items currently in the list.
 	 * @should Return the number of items
 	 * @should Return an empty array when there are no items
+	 * @should Not block list operations on other threads
 	 */
 	int getSize();
 

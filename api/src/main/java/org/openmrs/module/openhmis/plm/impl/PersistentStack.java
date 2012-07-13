@@ -40,25 +40,11 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 	 * @should Return items in last in first out order
 	 */
 	@Override
-	public PersistentListItem getNext() {
+	public PersistentListItem getNextItem() {
 		if (cachedItems.size() == 0) {
 			return null;
 		} else {
 			return cachedItems.peek();
-		}
-	}
-
-	/**
-	 * Gets the next {@link PersistentListItem} and removes it from the list.
-	 * @return The next {@link PersistentListItem}.
-	 * @should Return items in last in first out order
-	 */
-	@Override
-	public PersistentListItem getNextAndRemove() {
-		if (cachedItems.size() == 0) {
-			return null;
-		} else {
-			return cachedItems.pop();
 		}
 	}
 
