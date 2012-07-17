@@ -63,6 +63,14 @@
 		
 		<!-- End OpenMRS core -->
 
+		<dependency>
+			<groupId>org.openhmis.commons</groupId>
+			<artifactId>openhmis-commons</artifactId>
+			<type>jar</type>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/../lib/org.openhmis.commons.jar</systemPath>
+		</dependency>
+
 	</dependencies>
 
 	<build>

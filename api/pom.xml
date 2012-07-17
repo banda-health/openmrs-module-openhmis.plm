@@ -53,50 +53,23 @@
 
         <!-- End OpenMRS core -->
 
-        <dependency>
-            <groupId>org.openhmis.commons</groupId>
-            <artifactId>openhmis-commons</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>org.openhmis.commons</groupId>
+			<artifactId>openhmis-commons</artifactId>
+			<type>jar</type>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/../lib/org.openhmis.commons.jar</systemPath>
+		</dependency>
+	</dependencies>
 	
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-			    	<execution>
-			    		<id>copy</id>
-		      			<phase>generate-resources</phase>
-		      			<goals>
-		       				<goal>copy</goal>
-		      			</goals>
-		      			<configuration>
-							<artifactItems>
-				            	<artifactItem>
-				                   <groupId>org.openhmis.commons</groupId>
-				                   <artifactId>openhmis-commons</artifactId>
-				                   <version>1.0.0-SNAPSHOT</version>
-				                   <type>jar</type>
-				                   <outputDirectory>${project.build.directory}/lib</outputDirectory>
-				               </artifactItem>
-				            </artifactItems>
-		      			</configuration>
-			     	</execution>
-			    </executions>
-			</plugin>
-		</plugins>
-	
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
 			<resource>
-			    <directory>target/lib</directory>
+			    <directory>../lib</directory>
 				<targetPath>lib</targetPath>
 		 	</resource>
 		</resources>
@@ -105,6 +78,10 @@
 			<testResource>
 				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
+			</testResource>
+			<testResource>
+				<directory>../lib</directory>
+				<targetPath>lib</targetPath>
 			</testResource>
 		</testResources>
 
