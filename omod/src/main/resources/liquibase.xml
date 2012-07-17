@@ -10,7 +10,7 @@
     <changeSet id="openhmis.plm-2012-07-05-15:03" author="ibewes">
         <createTable tableName="plm_list">
             <column name="id" type="int" autoIncrement="true">
-                <constraints nullable="false" primaryKey="true"/>
+                <constraints  nullable="false" primaryKey="true"/>
             </column>
             <column name="key" type="varchar(250)">
                 <constraints nullable="false" unique="true" />
@@ -64,11 +64,11 @@
 		    <column name="creator"/>
 	    </createIndex>
 
-	    <addForeignKeyConstraint baseTableName="users" baseColumnNames="user_id" constraintName="plm_list_item_user"
-	                             referencedTableName="plm_list_item" referencedColumnNames="creator"
+	    <addForeignKeyConstraint baseTableName="plm_list_item" baseColumnNames="creator" constraintName="plm_list_item_user"
+	                             referencedTableName="users" referencedColumnNames="user_id"
 			                    onDelete="NO ACTION" onUpdate="CASCADE"/>
-	    <addForeignKeyConstraint baseTableName="plm_lists" baseColumnNames="list_id" constraintName="plm_list_item_list"
-	                             referencedTableName="plm_list_item" referencedColumnNames="list_id"
+	    <addForeignKeyConstraint baseTableName="plm_list_item" baseColumnNames="list_id" constraintName="plm_list_item_list"
+	                             referencedTableName="plm_list" referencedColumnNames="id"
 	                             onDelete="CASCADE" onUpdate="CASCADE" />
     </changeSet>
 
