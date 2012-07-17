@@ -19,13 +19,22 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.openmrs.module.openhmis.plm.impl.ListEventListenerAdapter;
+import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.junit.matchers.JUnitMatchers.hasItems;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
 @RunWith(PowerMockRunner.class)
@@ -180,8 +189,76 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void add_shouldBlockListOperationsOnOtherThreadsUntilComplete() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when add is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return null;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).add(any(PersistentListItemModel.class));
+
+		// Create the thread to start the add operation
+		final PersistentListItem item = new PersistentListItem("test", null);
+		Thread addThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.add(item);
+			}
+		});
+		addThread.setName("Add Item Thread");
+
+		// Create the thread to try to another operation while waiting on the add op
+		ListGetNextRunnable runnable = new ListGetNextRunnable(list, new ListOperation() {
+			@Override
+			public PersistentListItem execute(PersistentList list) {
+				return list.getNext();
+			}
+		});
+		Thread getThread = new Thread(runnable);
+		getThread.setName("Get Item Thread");
+
+		// Start the add op then the get op
+		addThread.start();
+		getThread.start();
+
+		// Wait for a bit to ensure that the get *should* have completed
+		Thread.sleep(100);
+
+		// The get op should not have completed yet
+		Assert.assertTrue(getThread.isAlive());
+		Assert.assertNull(runnable.getItem());
+
+		// Signal the monitor so that the add op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
+
+		// Wait for a bit to ensure that the add is done
+		Thread.sleep(100);
+
+		// Check that the add is done
+		Assert.assertFalse(addThread.isAlive());
+
+		// Wait for a bit to ensure that the get is complete
+		Thread.sleep(100);
+
+		// The get op should now have completed
+		Assert.assertFalse(getThread.isAlive());
+		Assert.assertNotNull(runnable.getItem());
 	}
 
 	/**
@@ -853,5 +930,60 @@ public abstract class PersistentListTest {
 		public void listCleared(ListEvent event) {
 			cleared++;
 		}
+	}
+
+	public class ListGetNextRunnable implements Runnable {
+		public ListGetNextRunnable(PersistentList list, ListOperation op) {
+			this.list = list;
+			this.op = op;
+
+			this.started = null;
+			this.completed = null;
+			this.item = null;
+		}
+
+		private PersistentList list;
+		private ListOperation op;
+
+		private volatile Date started;
+		private volatile Date completed;
+		private volatile PersistentListItem item;
+
+		@Override
+		public void run() {
+			started = new Date();
+
+			item = op.execute(list);
+
+			completed = new Date();
+		}
+
+		public Date getStarted() {
+			return started;
+		}
+
+		public void setStarted(Date started) {
+			this.started = started;
+		}
+
+		public Date getCompleted() {
+			return completed;
+		}
+
+		public void setCompleted(Date completed) {
+			this.completed = completed;
+		}
+
+		public PersistentListItem getItem() {
+			return item;
+		}
+
+		public void setItem(PersistentListItem item) {
+			this.item = item;
+		}
+	}
+
+	public class ListOperation {
+		PersistentListItem execute(PersistentList list) { return null; }
 	}
 }

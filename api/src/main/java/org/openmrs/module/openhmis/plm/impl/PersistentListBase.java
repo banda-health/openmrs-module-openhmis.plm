@@ -42,12 +42,12 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	private Log log = LogFactory.getLog(PersistentListBase.class);
 
 	protected final Object syncLock = new Object();
+	protected volatile T cachedItems;
 
 	protected Integer id;
 	protected String key;
 	protected String description;
 	protected PersistentListProvider provider;
-	protected T cachedItems;
 	protected List<String> itemKeys = new ArrayList<String>();
 	private FireableEventListenerList listenerList = new FireableEventListenerList();
 
