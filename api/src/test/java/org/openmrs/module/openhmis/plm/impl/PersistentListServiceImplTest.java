@@ -19,11 +19,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.openhmis.plm.*;
 import org.openmrs.module.openhmis.plm.model.PersistentListModel;
 import org.openmrs.module.openhmis.plm.test.TestPersistentList;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Date;
@@ -31,7 +29,6 @@ import java.util.Date;
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ModuleFactory.class)
 public class PersistentListServiceImplTest {
 	protected PersistentListServiceProvider serviceProvider;
 	protected PersistentListProvider listProvider;

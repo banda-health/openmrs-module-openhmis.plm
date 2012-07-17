@@ -39,9 +39,9 @@ import java.util.List;
 @Component
 public class DatabaseListProvider implements PersistentListProvider {
 	private static final String ADD_SQL =
-		"UPDATE plm_list_items SET primary_order = primary_order + 1 WHERE list_id = ? AND primary_order >= ?";
+		"UPDATE plm_list_items SET primary_order = primary_order + 1 WHERE list_id = ? AND item_order >= ?";
 	private static final String REMOVE_SQL =
-		"UPDATE plm_list_items SET primary_order = primary_order - 1 WHERE list_id = ? AND primary_order >= ?";
+		"UPDATE plm_list_items SET primary_order = primary_order - 1 WHERE list_id = ? AND item_order >= ?";
 	private static final String CLEAR_SQL = "DELETE FROM plm_list_items WHERE list_id = ?";
 
 	private final Log log = LogFactory.getLog(PersistentListServiceImpl.class);

@@ -35,7 +35,8 @@ import java.util.List;
  *
  * @param <T> The collection type for the list implementation.
  */
-public abstract class PersistentListBase<T extends Collection<PersistentListItem>> implements PersistentList, Initializable {
+public abstract class PersistentListBase<T extends Collection<PersistentListItem>>
+		implements PersistentList, Initializable {
 	public final static int MAX_ITEM_KEY_LENGTH = 250;
 
 	private Log log = LogFactory.getLog(PersistentListBase.class);
@@ -76,9 +77,20 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	 */
 	protected abstract PersistentListItem getNextItem();
 
+	/**
+	 * Implementors must create the logic to get an item by index.
+	 * @param index The index of the item to get.
+	 * @return The item or null if there is no item at the specified index.
+	 */
+	protected abstract PersistentListItem getItemByIndex(int index);
+
 	protected abstract T initializeCache();
 	protected abstract int getItemIndex(PersistentListItem item);
 
+	/**
+	 * Initializes the persistent list.
+	 * @should load all items from the provider and add them to the list
+	 */
 	@Override
 	public void initialize() {
 		log.debug("Initializing the '" + key + "' list...");
@@ -235,7 +247,18 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 
 	@Override
 	public PersistentListItem getItemAt(int index) {
-		throw new NotImplementedException();
+		if (index < 0) {
+			throw new IllegalArgumentException("The index must be a positive integer.");
+		}
+
+		// This base implementation should be overriden if possible
+		synchronized (syncLock) {
+			if (index >= cachedItems.size()) {
+				return null;
+			}
+
+			return getItemByIndex(index);
+		}
 	}
 
 	@Override

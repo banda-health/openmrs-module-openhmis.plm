@@ -55,5 +55,10 @@ public class PersistentQueue extends PersistentListBase<LinkedList<PersistentLis
 
 		return index;
 	}
+
+	@Override
+	protected PersistentListItem getItemByIndex(int index) {
+		return cachedItems.get(index);
+	}
 }
 

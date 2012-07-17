@@ -14,21 +14,44 @@
 
 package org.openmrs.module.openhmis.plm.impl;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.module.openhmis.plm.PersistentList;
 import org.openmrs.module.openhmis.plm.PersistentListItem;
 import org.openmrs.module.openhmis.plm.PersistentListProvider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-public class PersistentQueueTest extends PersistentListTestBase {
+public class PersistentQueueTest extends PersistentListBaseTest {
 	@Override
-	protected PersistentList createList(PersistentListProvider provider) {
-		PersistentQueue queue = new PersistentQueue(1, "test", provider);
-		queue.initialize();
+	protected PersistentList createList(PersistentListProvider mockedProvider) {
+		return new PersistentQueue(1, "test", mockedProvider);
+	}
 
-		return queue;
+	/**
+	 * @verifies insert the item at the specified index and move the existing items
+	 * @see PersistentList#insert(PersistentListItem, int)
+	 */
+	@Test
+	@Override
+	public void insert_shouldInsertTheItemAtTheSpecifiedIndexAndMoveTheExistingItems() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		// Add some items to the list
+		list.add(item1, item2, item3);
+		Assert.assertEquals(3, list.getSize());
+
+		// Insert the item in the middle
+		list.insert(item4, 1);
+
+		// Now check the order
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(4, items.length);
+		Assert.assertEquals(item1, items[0]);
+		Assert.assertEquals(item4, items[1]);
+		Assert.assertEquals(item2, items[2]);
+		Assert.assertEquals(item3, items[3]);
 	}
 
 	/**
@@ -44,12 +67,12 @@ public class PersistentQueueTest extends PersistentListTestBase {
 		list.add(item1, item2, item3);
 
 		PersistentListItem[] items = list.getItems();
-		assertNotNull(items);
-		assertEquals(3, items.length);
+		Assert.assertNotNull(items);
+		Assert.assertEquals(3, items.length);
 
-		assertEquals(item1, items[0]);
-		assertEquals(item2, items[1]);
-		assertEquals(item3, items[2]);
+		Assert.assertEquals(item1, items[0]);
+		Assert.assertEquals(item2, items[1]);
+		Assert.assertEquals(item3, items[2]);
 	}
 
 	/**
@@ -65,20 +88,20 @@ public class PersistentQueueTest extends PersistentListTestBase {
 		list.add(item1, item2, item3);
 
 		PersistentListItem[] items = list.getItems();
-		assertNotNull(items);
-		assertEquals(3, items.length);
+		Assert.assertNotNull(items);
+		Assert.assertEquals(3, items.length);
 
 		PersistentListItem item = list.getNextAndRemove();
-		assertNotNull(item);
-		assertEquals(item1, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item1, item);
 
 		item = list.getNextAndRemove();
-		assertNotNull(item);
-		assertEquals(item2, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item2, item);
 
 		item = list.getNextAndRemove();
-		assertNotNull(item);
-		assertEquals(item3, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item3, item);
 	}
 
 	/**
@@ -93,17 +116,17 @@ public class PersistentQueueTest extends PersistentListTestBase {
 		list.add(item1, item2);
 
 		PersistentListItem[] items = list.getItems();
-		assertNotNull(items);
-		assertEquals(2, items.length);
+		Assert.assertNotNull(items);
+		Assert.assertEquals(2, items.length);
 
 		PersistentListItem item = list.getNext();
-		assertNotNull(item);
-		assertEquals(item1, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item1, item);
 
 		list.remove(item);
 		item = list.getNext();
-		assertNotNull(item);
-		assertEquals(item2, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item2, item);
 	}
 }
 

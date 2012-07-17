@@ -85,4 +85,9 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 
 		return index * -1;
 	}
+
+	@Override
+	protected PersistentListItem getItemByIndex(int index) {
+		return cachedItems.get(index * -1);
+	}
 }

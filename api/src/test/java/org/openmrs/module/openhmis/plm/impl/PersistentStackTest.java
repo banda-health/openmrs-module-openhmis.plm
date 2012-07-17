@@ -14,6 +14,7 @@
 
 package org.openmrs.module.openhmis.plm.impl;
 
+import junit.framework.Assert;
 import org.junit.Test;
 import org.openmrs.module.openhmis.plm.PersistentList;
 import org.openmrs.module.openhmis.plm.PersistentListItem;
@@ -22,14 +23,15 @@ import org.openmrs.module.openhmis.plm.PersistentListProvider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class PersistentStackTest extends PersistentListTestBase {
+public class PersistentStackTest extends PersistentListBaseTest {
+	@Override
+	protected PersistentList createList(PersistentListProvider mockedProvider) {
+		return new PersistentStack(1, "test", mockedProvider);
+	}
 
 	@Override
-	protected PersistentList createList(PersistentListProvider provider) {
-		PersistentStack stack = new PersistentStack(1, "test", provider);
-		stack.initialize();
-
-		return stack;
+	public void insert_shouldInsertTheItemAtTheSpecifiedIndexAndMoveTheExistingItems() throws Exception {
+		Assert.fail("Not implemented");
 	}
 
 	/**

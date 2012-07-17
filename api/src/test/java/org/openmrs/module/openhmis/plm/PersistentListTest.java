@@ -18,21 +18,28 @@ import liquibase.util.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openmrs.module.openhmis.plm.impl.ListEventListenerAdapter;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.matchers.JUnitMatchers.hasItems;
+import static org.mockito.Mockito.mock;
 
+@RunWith(PowerMockRunner.class)
 public abstract class PersistentListTest {
+	protected PersistentListProvider mockedProvider;
 	protected PersistentList list;
 
-	protected abstract PersistentList loadList();
+	protected abstract PersistentList loadList(PersistentListProvider mockedProvider);
 
 	@Before
 	public void before() {
-		list = loadList();
+		mockedProvider = mock(PersistentListProvider.class);
+
+		list = loadList(mockedProvider);
 	}
 
 	/**
@@ -181,10 +188,11 @@ public abstract class PersistentListTest {
 	 * @verifies throw IllegalArgumentException if the index is less than zero
 	 * @see PersistentList#insert(PersistentListItem, int)
 	 */
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void insert_shouldThrowIllegalArgumentExceptionIfTheIndexIsLessThanZero() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item = new PersistentListItem("a", null);
+
+		list.insert(item, -1);
 	}
 
 	/**
@@ -193,8 +201,22 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void insert_shouldInsertTheItemAtTheEndOfTheListIfTheIndexIsLargerThanTheListSize() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		// Add some items to the list
+		list.add(item1, item2, item3);
+		Assert.assertEquals(3, list.getSize());
+
+		// Now insert the item past the end of the list
+		list.insert(item4, 10);
+
+		// The item should be last, regardless of the list implementation
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(4, items.length);
+		Assert.assertEquals(item4, items[3]);
 	}
 
 	/**
@@ -202,29 +224,20 @@ public abstract class PersistentListTest {
 	 * @see PersistentList#insert(PersistentListItem, int)
 	 */
 	@Test
-	public void insert_shouldInsertTheItemAtTheSpecifiedIndexAndMoveTheExistingItems() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
-	}
-
-	/**
-	 * @verifies update each moved item via the list provider
-	 * @see PersistentList#insert(PersistentListItem, int)
-	 */
-	@Test
-	public void insert_shouldUpdateEachMovedItemViaTheListProvider() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
-	}
+	public abstract void insert_shouldInsertTheItemAtTheSpecifiedIndexAndMoveTheExistingItems() throws Exception;
 
 	/**
 	 * @verifies throw PersistentListException when a duplicate item is inserted
 	 * @see PersistentList#insert(PersistentListItem, int)
 	 */
-	@Test
+	@Test(expected = PersistentListException.class)
 	public void insert_shouldThrowPersistentListExceptionWhenADuplicateItemIsInserted() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+
+		list.add(item1);
+
+		list.insert(item2, 0);
 	}
 
 	/**
@@ -506,7 +519,7 @@ public abstract class PersistentListTest {
 		Assert.assertNotNull(items);
 		Assert.assertEquals(3, items.length);
 
-		// Just check that the items are in the list, order is not important
+		// Just check that the items are in the list, order is dependent on the list implementation
 		List<PersistentListItem> itemList = Arrays.asList(items);
 		Assert.assertThat(itemList, hasItems(item1, item2, item3));
 	}
@@ -527,8 +540,16 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getItemAt_shouldReturnTheItemAtTheSpecifiedIndex() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+
+		list.add(item1, item2);
+
+		PersistentListItem item = list.getItemAt(0);
+		Assert.assertEquals(item1, item);
+
+		item = list.getItemAt(1);
+		Assert.assertEquals(item2, item);
 	}
 
 	/**
@@ -537,18 +558,26 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getItemAt_shouldReturnNullWhenThereIsNoItemAtTheSpecifiedIndex() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item = list.getItemAt(0);
+		Assert.assertNull(item);
+
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		list.add(item1);
+
+		item = list.getItemAt(1);
+		Assert.assertNull(item);
 	}
 
 	/**
 	 * @verifies Throw IllegalArgumentException when the index is less than zero
 	 * @see PersistentList#getItemAt(int)
 	 */
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void getItemAt_shouldThrowIllegalArgumentExceptionWhenTheIndexIsLessThanZero() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		list.add(item1);
+
+		list.getItemAt(-1);
 	}
 
 	/**
@@ -557,8 +586,13 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getItemAt_shouldReturnNullIfTheIndexIsLargerThanOrEqualToTheListSize() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+
+		list.add(item1);
+
+		PersistentListItem item = list.getItemAt(1);
+
+		Assert.assertNull(item);
 	}
 
 	/**
@@ -642,8 +676,19 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getNextAndRemove_shouldFireTheItemRemovedEvent() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item = new PersistentListItem("key", null);
+		list.add(item);
+
+		TestListEventListener listener = new TestListEventListener();
+		list.addEventListener(listener);
+
+		PersistentListItem result = list.getNextAndRemove();
+		Assert.assertNotNull(result);
+		Assert.assertEquals(item, result);
+
+		Assert.assertEquals(0, listener.added);
+		Assert.assertEquals(1, listener.removed);
+		Assert.assertEquals(0, listener.cleared);
 	}
 
 	/**
