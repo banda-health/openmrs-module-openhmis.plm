@@ -24,9 +24,7 @@
         <property name="moduleService">
             <list>
                 <value>org.openmrs.module.openhmis.plm.PersistentListService</value>
-                <bean class="org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl">
-	                <constructor-arg name="serviceProvider" value="org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl" />
-                </bean>
+                <bean class="org.openmrs.module.openhmis.plm.impl.PersistentListServiceImpl" />
             </list>
         </property>
     </bean>
