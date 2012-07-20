@@ -14,22 +14,98 @@
 
 package org.openmrs.module.openhmis.plm.impl;
 
+import junit.framework.Assert;
 import org.junit.Test;
 import org.openmrs.module.openhmis.plm.PersistentList;
 import org.openmrs.module.openhmis.plm.PersistentListItem;
 import org.openmrs.module.openhmis.plm.PersistentListProvider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-public class PersistentStackTest extends PersistentListTestBase {
-
+public class PersistentStackTest extends PersistentListBaseTest {
 	@Override
-	protected PersistentList createList(PersistentListProvider provider) {
-		PersistentStack stack = new PersistentStack(1, "test", provider);
-		stack.initialize();
+	protected PersistentList createList(PersistentListProvider mockedProvider) {
+		return new PersistentStack(1, "test", mockedProvider);
+	}
 
-		return stack;
+	@Test
+	@Override
+	public void insert_shouldInsertTheItemAtTheSpecifiedIndexAndMoveTheExistingItems() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+		PersistentListItem item5 = new PersistentListItem("5", null);
+
+		// Add some items to the list
+		list.add(item1, item2, item3);
+		Assert.assertEquals(3, list.getSize());
+
+		// Insert the item in the middle
+		list.insert(1, item4);
+
+		// Now check the order
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(4, items.length);
+		Assert.assertEquals(item3, items[0]);
+		Assert.assertEquals(item4, items[1]);
+		Assert.assertEquals(item2, items[2]);
+		Assert.assertEquals(item1, items[3]);
+
+		list.insert(3, item5);
+		items = list.getItems();
+		Assert.assertEquals(5, items.length);
+		Assert.assertEquals(item3, items[0]);
+		Assert.assertEquals(item4, items[1]);
+		Assert.assertEquals(item2, items[2]);
+		Assert.assertEquals(item5, items[3]);
+		Assert.assertEquals(item1, items[4]);
+	}
+
+	@Test
+	@Override
+	public void insert_shouldInsertTheItemProperlyAtTheBeginningOfTheList() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		// Add some items to the list
+		list.add(item1, item2, item3);
+		Assert.assertEquals(3, list.getSize());
+
+		// Insert the item at the start
+		list.insert(0, item4);
+
+		// Now check the order
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(4, items.length);
+		Assert.assertEquals(item4, items[0]);
+		Assert.assertEquals(item3, items[1]);
+		Assert.assertEquals(item2, items[2]);
+		Assert.assertEquals(item1, items[3]);
+	}
+
+	@Test
+	@Override
+	public void insert_shouldInsertTheItemProperlyAtTheEndOfTheList() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		// Add some items to the list
+		list.add(item1, item2, item3);
+		Assert.assertEquals(3, list.getSize());
+
+		// Insert the item at the end
+		list.insert(3, item4);
+
+		// Now check the order
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(4, items.length);
+		Assert.assertEquals(item3, items[0]);
+		Assert.assertEquals(item2, items[1]);
+		Assert.assertEquals(item1, items[2]);
+		Assert.assertEquals(item4, items[3]);
 	}
 
 	/**
@@ -45,12 +121,12 @@ public class PersistentStackTest extends PersistentListTestBase {
 		list.add(item1, item2, item3);
 
 		PersistentListItem[] items = list.getItems();
-		assertNotNull(items);
-		assertEquals(3, items.length);
+		Assert.assertNotNull(items);
+		Assert.assertEquals(3, items.length);
 
-		assertEquals(item3, items[0]);
-		assertEquals(item2, items[1]);
-		assertEquals(item1, items[2]);
+		Assert.assertEquals(item3, items[0]);
+		Assert.assertEquals(item2, items[1]);
+		Assert.assertEquals(item1, items[2]);
 	}
 
 	/**
@@ -66,20 +142,20 @@ public class PersistentStackTest extends PersistentListTestBase {
 		list.add(item1, item2, item3);
 
 		PersistentListItem[] items = list.getItems();
-		assertNotNull(items);
-		assertEquals(3, items.length);
+		Assert.assertNotNull(items);
+		Assert.assertEquals(3, items.length);
 
 		PersistentListItem item = list.getNextAndRemove();
-		assertNotNull(item);
-		assertEquals(item3, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item3, item);
 
 		item = list.getNextAndRemove();
-		assertNotNull(item);
-		assertEquals(item2, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item2, item);
 
 		item = list.getNextAndRemove();
-		assertNotNull(item);
-		assertEquals(item1, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item1, item);
 	}
 
 	/**
@@ -94,16 +170,40 @@ public class PersistentStackTest extends PersistentListTestBase {
 		list.add(item1, item2);
 
 		PersistentListItem[] items = list.getItems();
-		assertNotNull(items);
-		assertEquals(2, items.length);
+		Assert.assertNotNull(items);
+		Assert.assertEquals(2, items.length);
 
 		PersistentListItem item = list.getNext();
-		assertNotNull(item);
-		assertEquals(item2, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item2, item);
 
 		list.remove(item2);
 		item = list.getNext();
-		assertNotNull(item);
-		assertEquals(item1, item);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(item1, item);
+	}
+
+	/**
+	 * @verifies Return the item at the specified index
+	 * @see PersistentList#getItemAt(int)
+	 */
+	@Override
+	@Test
+	public void getItemAt_shouldReturnTheItemAtTheSpecifiedIndex() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		list.add(item1, item2, item3, item4);
+
+		PersistentListItem item = list.getItemAt(0);
+		Assert.assertEquals(item4, item);
+
+		item = list.getItemAt(1);
+		Assert.assertEquals(item3, item);
+
+		item = list.getItemAt(3);
+		Assert.assertEquals(item1, item);
 	}
 }

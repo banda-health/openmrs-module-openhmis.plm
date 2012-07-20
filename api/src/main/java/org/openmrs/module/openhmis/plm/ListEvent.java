@@ -39,17 +39,29 @@ public class ListEvent extends EventObject {
 	}
 
 	private transient PersistentListItem item;
+	private transient Integer index;
 	private transient ListOperation operation;
 
 	/**
 	 * Constructs the list event.
-	 *
 	 * @param list The {@link PersistentList} on which the event initially occurred.
-	 * @param item The {@link PersistentListItem} that the operation occurred upon.
+	 * @param item The {@link PersistentListItem} that the operation occurred on.
 	 * @param operation The {@link ListOperation} that occurred.
 	 * @throws IllegalArgumentException if list is null or if the item is null and the operation is not CLEARED.
 	 */
 	public ListEvent(PersistentList list, PersistentListItem item, ListOperation operation) {
+		this(list, item, null, operation);
+	}
+
+	/**
+	 * Constructs the list event.
+	 * @param list The {@link PersistentList} on which the event initially occurred.
+	 * @param item The {@link PersistentListItem} that the operation occurred on.
+	 * @param index The item index that the operation occurred on.
+	 * @param operation The {@link ListOperation} that occurred.
+	 * @throws IllegalArgumentException if list is null or if the item is null and the operation is not CLEARED.
+	 */
+	public ListEvent(PersistentList list, PersistentListItem item, Integer index, ListOperation operation) {
 		super(list);
 
 		if (operation != ListOperation.CLEARED && item == null) {
@@ -57,6 +69,7 @@ public class ListEvent extends EventObject {
 		}
 
 		this.item = item;
+		this.index = index;
 		this.operation = operation;
 	}
 
@@ -66,6 +79,14 @@ public class ListEvent extends EventObject {
 	 */
 	public PersistentListItem getItem() {
 		return item;
+	}
+
+	/**
+	 * Gets the item index that this operation occurred on or {@code null} if no index was specified.
+	 * @return The item index or {@code null}.
+	 */
+	public Integer getIndex() {
+		return index;
 	}
 
 	/**

@@ -31,33 +31,23 @@ public class PersistentQueue extends PersistentListBase<LinkedList<PersistentLis
 		super(id, key, provider);
 	}
 
-	/**
-	 * Gets the next {@link PersistentListItem} without removing the item from the list.
-	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
-	 * @should Return the next item in first in first out order
-	 */
-	@Override
-	public PersistentListItem getNext() {
-		return cachedItems.peek();
-	}
-
-	/**
-	 * Gets the next {@link PersistentListItem} and removes it from the list.
-	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
-	 * @should Return the next item in first in first out order
-	 */
-	@Override
-	public PersistentListItem getNextAndRemove() {
-		if (cachedItems.size() == 0) {
-			return null;
-		} else {
-			return cachedItems.pop();
-		}
-	}
-
 	@Override
 	protected LinkedList<PersistentListItem> initializeCache() {
 		return new LinkedList<PersistentListItem>();
+	}
+
+	@Override
+	protected void insertItem(int index, PersistentListItem item) {
+		cachedItems.add(index, item);
+	}
+
+	/**
+	 * Gets the next {@link PersistentListItem} without removing the item from the list.
+	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
+	 */
+	@Override
+	protected PersistentListItem getNextItem() {
+		return cachedItems.peek();
 	}
 
 	@Override
@@ -69,6 +59,11 @@ public class PersistentQueue extends PersistentListBase<LinkedList<PersistentLis
 		}
 
 		return index;
+	}
+
+	@Override
+	protected PersistentListItem getItemByIndex(int index) {
+		return cachedItems.get(index);
 	}
 }
 

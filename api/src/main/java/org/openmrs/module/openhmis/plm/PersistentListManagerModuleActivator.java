@@ -25,7 +25,7 @@ import org.openmrs.module.ModuleActivator;
 public class PersistentListManagerModuleActivator implements ModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
-		
+
 	/**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
