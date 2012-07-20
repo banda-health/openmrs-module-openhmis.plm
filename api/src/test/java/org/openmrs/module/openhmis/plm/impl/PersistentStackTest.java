@@ -16,14 +16,57 @@ package org.openmrs.module.openhmis.plm.impl;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import org.openhmis.commons.Initializable;
+import org.openhmis.commons.Utility;
 import org.openmrs.module.openhmis.plm.PersistentList;
 import org.openmrs.module.openhmis.plm.PersistentListItem;
 import org.openmrs.module.openhmis.plm.PersistentListProvider;
+import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
+
+import java.util.Date;
+
+import static org.mockito.Mockito.when;
 
 public class PersistentStackTest extends PersistentListBaseTest {
 	@Override
 	protected PersistentList createList(PersistentListProvider mockedProvider) {
 		return new PersistentStack(1, "test", mockedProvider);
+	}
+
+	@Test
+	@Override
+	public void initialize_shouldLoadAllItemsFromTheProviderAndAddThemToTheList() throws Exception {
+		org.junit.Assert.assertEquals(0, list.getSize());
+
+		PersistentListItemModel model1 = new PersistentListItemModel(0, "1", 0, null, null, new Date());
+		model1.setItemId(0);
+		PersistentListItemModel model2 = new PersistentListItemModel(0, "2", -1, null, null, new Date());
+		model2.setItemId(1);
+		PersistentListItemModel model3 = new PersistentListItemModel(0, "3", -2, null, null, new Date());
+		model3.setItemId(2);
+
+		when(mockedProvider.getItems(list)).thenReturn(new PersistentListItemModel[] { model1, model2, model3 });
+
+		Initializable init = Utility.as(Initializable.class, list);
+		if (init == null) {
+			Assert.fail("Unexpected list type: " + list.getClass().getName());
+		} else {
+			init.initialize();
+		}
+
+		Assert.assertEquals(3, list.getSize());
+
+		PersistentListItem item = list.getItemAt(0);
+		Assert.assertNotNull(item);
+		Assert.assertEquals("3", item.getKey());
+
+		item = list.getItemAt(1);
+		Assert.assertNotNull(item);
+		Assert.assertEquals("2", item.getKey());
+
+		item = list.getItemAt(2);
+		Assert.assertNotNull(item);
+		Assert.assertEquals("1", item.getKey());
 	}
 
 	@Test

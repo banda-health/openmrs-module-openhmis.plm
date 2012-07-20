@@ -220,7 +220,7 @@ public abstract class PersistentListTest {
 		addThread.setName("Add Item Thread");
 
 		// Create the thread to try to another operation while waiting on the add op
-		ListGetNextRunnable runnable = new ListGetNextRunnable(list, new ListOperation() {
+		ListGetRunnable runnable = new ListGetRunnable(list, new ListGetOperation() {
 			@Override
 			public PersistentListItem execute(PersistentList list) {
 				return list.getNext();
@@ -231,6 +231,7 @@ public abstract class PersistentListTest {
 
 		// Start the add op then the get op
 		addThread.start();
+		Thread.sleep(100);
 		getThread.start();
 
 		// Wait for a bit to ensure that the get *should* have completed
@@ -464,7 +465,7 @@ public abstract class PersistentListTest {
 		addThread.setName("Insert Item Thread");
 
 		// Create the thread to try to another operation while waiting on the add op
-		ListGetNextRunnable runnable = new ListGetNextRunnable(list, new ListOperation() {
+		ListGetRunnable runnable = new ListGetRunnable(list, new ListGetOperation() {
 			@Override
 			public PersistentListItem execute(PersistentList list) {
 				return list.getItemAt(1);
@@ -475,6 +476,7 @@ public abstract class PersistentListTest {
 
 		// Start the add op then the get op
 		addThread.start();
+		Thread.sleep(100);
 		getThread.start();
 
 		// Wait for a bit to ensure that the get *should* have completed
@@ -657,7 +659,7 @@ public abstract class PersistentListTest {
 		addThread.setName("Remove Item Thread");
 
 		// Create the thread to try to another operation while waiting on the remove op
-		ListGetNextRunnable runnable = new ListGetNextRunnable(list, new ListOperation() {
+		ListGetRunnable runnable = new ListGetRunnable(list, new ListGetOperation() {
 			@Override
 			public PersistentListItem execute(PersistentList list) {
 				return list.getNext();
@@ -668,6 +670,7 @@ public abstract class PersistentListTest {
 
 		// Start the remove op then the get op
 		addThread.start();
+		Thread.sleep(100);
 		getThread.start();
 
 		// Wait for a bit to ensure that the get *should* have completed
@@ -768,8 +771,76 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void clear_shouldBlockListOperationsOnOtherThreadsUntilComplete() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when test op is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return null;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).clear(list);
+
+		// Create the thread to start the clear operation
+		Thread blockingThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.clear();
+			}
+		});
+		blockingThread.setName("Blocking Thread");
+
+		// Create the thread to try to another operation while waiting on the test op
+		ListGetRunnable runnable = new ListGetRunnable(list, new ListGetOperation() {
+			@Override
+			public PersistentListItem execute(PersistentList list) {
+				return list.getNext();
+			}
+		});
+		Thread blockedThread = new Thread(runnable);
+		blockedThread.setName("Blocked Thread");
+
+		// Start the test op then the blocked op
+		blockingThread.start();
+		Thread.sleep(100);
+		blockedThread.start();
+
+		// Wait for a bit to ensure that the blocked *should* have completed
+		Thread.sleep(100);
+
+		// Test that the block op has completed
+		Assert.assertTrue(blockedThread.isAlive());
+		Assert.assertNull(runnable.getCompleted());
+
+		// Signal the monitor so that the test op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
+
+		// Wait for a bit to ensure that the test op is done
+		Thread.sleep(100);
+
+		// Check that the test op is done
+		Assert.assertFalse(blockingThread.isAlive());
+
+		// Wait for a bit to ensure that the blocked op is complete
+		Thread.sleep(100);
+
+		// The blocked op should now have completed
+		Assert.assertFalse(blockedThread.isAlive());
+		Assert.assertNotNull(runnable.getCompleted());
 	}
 
 	/**
@@ -818,8 +889,83 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getItems_shouldBlockListOperationsOnOtherThreadsUntilComplete() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		// Because getItems does not interact with the provider we cannot halt the op, so instead
+		//  show that getItems will wait for other operations that block
+
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when test op is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return null;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).add(any(PersistentListItemModel.class));
+
+		// Create the thread to start the clear operation
+		final PersistentListItem item = new PersistentListItem("test", null);
+		Thread blockingThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.add(item);
+			}
+		});
+		blockingThread.setName("Blocking Thread");
+
+		// Create the thread to try to another operation while waiting on the test op
+		ListGetAllRunnable runnable = new ListGetAllRunnable(list, new ListGetAllOperation() {
+			@Override
+			public PersistentListItem[] execute(PersistentList list) {
+				return list.getItems();
+			}
+		});
+		Thread blockedThread = new Thread(runnable);
+		blockedThread.setName("Blocked Thread");
+
+		// Start the test op then the blocked op
+		blockingThread.start();
+		Thread.sleep(100);
+		blockedThread.start();
+
+		// Wait for a bit to ensure that the blocked *should* have completed
+		Thread.sleep(100);
+
+		// Test that the block op has completed
+		Assert.assertTrue(blockedThread.isAlive());
+		Assert.assertNull(runnable.getItems());
+
+		// Signal the monitor so that the test op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
+
+		// Wait for a bit to ensure that the test op is done
+		Thread.sleep(100);
+
+		// Check that the test op is done
+		Assert.assertFalse(blockingThread.isAlive());
+
+		// Wait for a bit to ensure that the blocked op is complete
+		Thread.sleep(100);
+
+		// The blocked op should now have completed
+		Assert.assertFalse(blockedThread.isAlive());
+		PersistentListItem[] items = runnable.getItems();
+		Assert.assertNotNull(items);
+		Assert.assertEquals(1, items.length);
+		Assert.assertEquals(item, items[0]);
 	}
 
 	/**
@@ -878,8 +1024,80 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getItemAt_shouldBlockListOperationsOnOtherThreadsUntilComplete() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		// Because getItemAt does not interact with the provider we cannot halt the op, so instead
+		//  show that getItemAt will wait for other operations that block
+
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when test op is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return null;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).add(any(PersistentListItemModel.class));
+
+		// Create the thread to start the clear operation
+		final PersistentListItem item = new PersistentListItem("test", null);
+		Thread blockingThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.add(item);
+			}
+		});
+		blockingThread.setName("Blocking Thread");
+
+		// Create the thread to try to another operation while waiting on the test op
+		ListGetRunnable runnable = new ListGetRunnable(list, new ListGetOperation() {
+			@Override
+			public PersistentListItem execute(PersistentList list) {
+				return list.getItemAt(0);
+			}
+		});
+		Thread blockedThread = new Thread(runnable);
+		blockedThread.setName("Blocked Thread");
+
+		// Start the test op then the blocked op
+		blockingThread.start();
+		Thread.sleep(100);
+		blockedThread.start();
+
+		// Wait for a bit to ensure that the blocked *should* have completed
+		Thread.sleep(100);
+
+		// Test that the block op has completed
+		Assert.assertTrue(blockedThread.isAlive());
+		Assert.assertNull(runnable.getItem());
+
+		// Signal the monitor so that the test op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
+
+		// Wait for a bit to ensure that the test op is done
+		Thread.sleep(100);
+
+		// Check that the test op is done
+		Assert.assertFalse(blockingThread.isAlive());
+
+		// Wait for a bit to ensure that the blocked op is complete
+		Thread.sleep(100);
+
+		// The blocked op should now have completed
+		Assert.assertFalse(blockedThread.isAlive());
+		Assert.assertEquals(item, runnable.getItem());
 	}
 
 	/**
@@ -915,8 +1133,80 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getNext_shouldBlockListOperationsOnOtherThreadsUntilComplete() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		// Because getNext does not interact with the provider we cannot halt the op, so instead
+		//  show that getNext will wait for other operations that block
+
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when test op is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return null;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).add(any(PersistentListItemModel.class));
+
+		// Create the thread to start the clear operation
+		final PersistentListItem item = new PersistentListItem("test", null);
+		Thread blockingThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.add(item);
+			}
+		});
+		blockingThread.setName("Blocking Thread");
+
+		// Create the thread to try to another operation while waiting on the test op
+		ListGetRunnable runnable = new ListGetRunnable(list, new ListGetOperation() {
+			@Override
+			public PersistentListItem execute(PersistentList list) {
+				return list.getNext();
+			}
+		});
+		Thread blockedThread = new Thread(runnable);
+		blockedThread.setName("Blocked Thread");
+
+		// Start the test op then the blocked op
+		blockingThread.start();
+		Thread.sleep(100);
+		blockedThread.start();
+
+		// Wait for a bit to ensure that the blocked *should* have completed
+		Thread.sleep(100);
+
+		// Test that the block op has completed
+		Assert.assertTrue(blockedThread.isAlive());
+		Assert.assertNull(runnable.getItem());
+
+		// Signal the monitor so that the test op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
+
+		// Wait for a bit to ensure that the test op is done
+		Thread.sleep(100);
+
+		// Check that the test op is done
+		Assert.assertFalse(blockingThread.isAlive());
+
+		// Wait for a bit to ensure that the blocked op is complete
+		Thread.sleep(100);
+
+		// The blocked op should now have completed
+		Assert.assertFalse(blockedThread.isAlive());
+		Assert.assertEquals(item, runnable.getItem());
 	}
 
 	/**
@@ -974,8 +1264,79 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getNextAndRemove_shouldBlockListOperationsOnOtherThreadsUntilComplete() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		list.add(item1, item2);
+
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when test op is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return true;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).remove(any(PersistentListItemModel.class));
+
+		// Create the thread to start the clear operation
+		Thread blockingThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.getNextAndRemove();
+			}
+		});
+		blockingThread.setName("Blocking Thread");
+
+		// Create the thread to try to another operation while waiting on the test op
+		ListGetRunnable runnable = new ListGetRunnable(list, new ListGetOperation() {
+			@Override
+			public PersistentListItem execute(PersistentList list) {
+				return list.getNext();
+			}
+		});
+		Thread blockedThread = new Thread(runnable);
+		blockedThread.setName("Blocked Thread");
+
+		// Start the test op then the blocked op
+		blockingThread.start();
+		blockedThread.start();
+
+		// Wait for a bit to ensure that the blocked *should* have completed
+		Thread.sleep(100);
+
+		// Test that the block op has completed
+		Assert.assertTrue(blockedThread.isAlive());
+		Assert.assertNull(runnable.getItem());
+
+		// Signal the monitor so that the test op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
+
+		// Wait for a bit to ensure that the test op is done
+		Thread.sleep(100);
+
+		// Check that the test op is done
+		Assert.assertFalse(blockingThread.isAlive());
+
+		// Wait for a bit to ensure that the blocked op is complete
+		Thread.sleep(100);
+
+		// The blocked op should now have completed
+		Assert.assertFalse(blockedThread.isAlive());
+		Assert.assertNotNull(runnable.getItem());
 	}
 
 	/**
@@ -1015,8 +1376,64 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void getSize_shouldNotBlockListOperationsOnOtherThreads() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when test op is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return null;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).add(any(PersistentListItemModel.class));
+
+		// Create the thread to start the clear operation
+		final PersistentListItem item = new PersistentListItem("test", null);
+		Thread blockingThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.add(item);
+			}
+		});
+		blockingThread.setName("Blocking Thread");
+
+		// Create the thread to try to another operation while waiting on the test op
+		ListGetSizeRunnable runnable = new ListGetSizeRunnable(list, new ListGetSizeOperation() {
+			@Override
+			public Integer execute(PersistentList list) {
+				return list.getSize();
+			}
+		});
+		Thread unblockedThread = new Thread(runnable);
+		unblockedThread.setName("Unblocked Thread");
+
+		// Start the test op then the blocked op
+		blockingThread.start();
+		Thread.sleep(100);
+		unblockedThread.start();
+
+		// Wait for a bit to ensure that the blocked has completed
+		Thread.sleep(100);
+
+		// Test that the unblocked op has completed
+		Assert.assertFalse(unblockedThread.isAlive());
+		Assert.assertNotNull(runnable.getSize());
+
+		// Signal the monitor so that the test op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	/**
@@ -1134,28 +1551,25 @@ public abstract class PersistentListTest {
 		}
 	}
 
-	public class ListGetNextRunnable implements Runnable {
-		public ListGetNextRunnable(PersistentList list, ListOperation op) {
+	public abstract class ListRunnable implements Runnable {
+		public ListRunnable(PersistentList list) {
 			this.list = list;
-			this.op = op;
 
 			this.started = null;
 			this.completed = null;
-			this.item = null;
 		}
 
 		private PersistentList list;
-		private ListOperation op;
-
 		private volatile Date started;
 		private volatile Date completed;
-		private volatile PersistentListItem item;
+
+		protected abstract void doRun();
 
 		@Override
-		public void run() {
+		public final void run() {
 			started = new Date();
 
-			item = op.execute(list);
+			doRun();
 
 			completed = new Date();
 		}
@@ -1175,6 +1589,23 @@ public abstract class PersistentListTest {
 		public void setCompleted(Date completed) {
 			this.completed = completed;
 		}
+	}
+
+	public class ListGetRunnable extends ListRunnable {
+		public ListGetRunnable(PersistentList list, ListGetOperation op) {
+			super(list);
+
+			this.op = op;
+			this.item = null;
+		}
+
+		private ListGetOperation op;
+		private volatile PersistentListItem item;
+
+		@Override
+		protected void doRun() {
+			item = op.execute(list);
+		}
 
 		public PersistentListItem getItem() {
 			return item;
@@ -1185,7 +1616,65 @@ public abstract class PersistentListTest {
 		}
 	}
 
-	public class ListOperation {
+	public class ListGetAllRunnable extends ListRunnable {
+		public ListGetAllRunnable(PersistentList list, ListGetAllOperation op) {
+			super(list);
+
+			this.op = op;
+			this.items = null;
+		}
+
+		private ListGetAllOperation op;
+		private volatile PersistentListItem[] items;
+
+		@Override
+		protected void doRun() {
+			items = op.execute(list);
+		}
+
+		public PersistentListItem[] getItems() {
+			return items;
+		}
+
+		public void setItems(PersistentListItem[] items) {
+			this.items = items;
+		}
+	}
+
+	public class ListGetSizeRunnable extends ListRunnable {
+		public ListGetSizeRunnable(PersistentList list, ListGetSizeOperation op) {
+			super(list);
+
+			this.op = op;
+			this.size = null;
+		}
+
+		private ListGetSizeOperation op;
+		private volatile Integer size;
+
+		@Override
+		protected void doRun() {
+			size = op.execute(list);
+		}
+
+		public Integer getSize() {
+			return size;
+		}
+
+		public void setSize(Integer size) {
+			this.size = size;
+		}
+	}
+
+	public class ListGetOperation {
 		PersistentListItem execute(PersistentList list) { return null; }
+	}
+
+	public class ListGetAllOperation {
+		PersistentListItem[] execute(PersistentList list) { return null; }
+	}
+
+	public class ListGetSizeOperation {
+		Integer execute(PersistentList list) { return null; }
 	}
 }

@@ -287,7 +287,9 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 
 	@Override
 	public PersistentListItem[] getItems() {
-		return cachedItems.toArray(new PersistentListItem[cachedItems.size()]);
+		synchronized (syncLock) {
+			return cachedItems.toArray(new PersistentListItem[cachedItems.size()]);
+		}
 	}
 
 	@Override
