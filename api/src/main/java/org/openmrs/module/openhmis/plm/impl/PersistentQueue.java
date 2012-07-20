@@ -31,6 +31,16 @@ public class PersistentQueue extends PersistentListBase<LinkedList<PersistentLis
 		super(id, key, provider);
 	}
 
+	@Override
+	protected LinkedList<PersistentListItem> initializeCache() {
+		return new LinkedList<PersistentListItem>();
+	}
+
+	@Override
+	protected void insertItem(int index, PersistentListItem item) {
+		cachedItems.add(index, item);
+	}
+
 	/**
 	 * Gets the next {@link PersistentListItem} without removing the item from the list.
 	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
@@ -38,11 +48,6 @@ public class PersistentQueue extends PersistentListBase<LinkedList<PersistentLis
 	@Override
 	protected PersistentListItem getNextItem() {
 		return cachedItems.peek();
-	}
-
-	@Override
-	protected LinkedList<PersistentListItem> initializeCache() {
-		return new LinkedList<PersistentListItem>();
 	}
 
 	@Override

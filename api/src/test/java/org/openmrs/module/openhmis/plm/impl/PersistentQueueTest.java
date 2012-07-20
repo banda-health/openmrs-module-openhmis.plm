@@ -28,7 +28,7 @@ public class PersistentQueueTest extends PersistentListBaseTest {
 
 	/**
 	 * @verifies insert the item at the specified index and move the existing items
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, org.openmrs.module.openhmis.plm.PersistentListItem)
 	 */
 	@Test
 	@Override
@@ -43,7 +43,7 @@ public class PersistentQueueTest extends PersistentListBaseTest {
 		Assert.assertEquals(3, list.getSize());
 
 		// Insert the item in the middle
-		list.insert(item4, 1);
+		list.insert(1, item4);
 
 		// Now check the order
 		PersistentListItem[] items = list.getItems();

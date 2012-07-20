@@ -81,8 +81,9 @@ public interface PersistentList {
 
 	/**
 	 * Inserts a new {@link PersistentListItem} to the list at the specified index.
-	 * @param item The {@link PersistentListItem} to insert.
+	 *
 	 * @param index The index where the item will be inserted.
+	 * @param item The {@link org.openmrs.module.openhmis.plm.PersistentListItem} to insert.
 	 * @should throw IllegalArgumentException if the index is less than zero
 	 * @should insert the item at the end of the list if the index is larger than the list size
 	 * @should insert the item at the specified index and move the existing items
@@ -93,7 +94,7 @@ public interface PersistentList {
 	 * @should Throw IllegalArgumentException if item key is longer than 250 characters
 	 * @should Block list operations on other threads until complete
 	 */
-	void insert(PersistentListItem item, int index);
+	void insert(int index, PersistentListItem item);
 
 	/**
 	 * Removes the specified {@link PersistentListItem} from the list.

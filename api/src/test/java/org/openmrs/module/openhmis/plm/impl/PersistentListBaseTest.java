@@ -26,6 +26,9 @@ import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
 
 import java.util.Date;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public abstract class PersistentListBaseTest extends PersistentListTest {
@@ -86,11 +89,21 @@ public abstract class PersistentListBaseTest extends PersistentListTest {
 
 	/**
 	 * @verifies update each moved item via the list provider
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, org.openmrs.module.openhmis.plm.PersistentListItem)
 	 */
 	@Test
 	public void insert_shouldUpdateEachMovedItemViaTheListProvider() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		list.add(item1, item2,  item3);
+
+		reset(mockedProvider);
+
+		list.insert(1, item4);
+
+		verify(mockedProvider).add(any(PersistentListItemModel.class));
 	}
 }

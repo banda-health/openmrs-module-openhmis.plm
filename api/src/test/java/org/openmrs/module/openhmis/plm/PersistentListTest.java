@@ -25,6 +25,7 @@ import org.openmrs.module.openhmis.plm.impl.ListEventListenerAdapter;
 import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -263,18 +264,18 @@ public abstract class PersistentListTest {
 
 	/**
 	 * @verifies throw IllegalArgumentException if the index is less than zero
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void insert_shouldThrowIllegalArgumentExceptionIfTheIndexIsLessThanZero() throws Exception {
 		PersistentListItem item = new PersistentListItem("a", null);
 
-		list.insert(item, -1);
+		list.insert(-1, item);
 	}
 
 	/**
 	 * @verifies insert the item at the end of the list if the index is larger than the list size
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
 	@Test
 	public void insert_shouldInsertTheItemAtTheEndOfTheListIfTheIndexIsLargerThanTheListSize() throws Exception {
@@ -288,7 +289,7 @@ public abstract class PersistentListTest {
 		Assert.assertEquals(3, list.getSize());
 
 		// Now insert the item past the end of the list
-		list.insert(item4, 10);
+		list.insert(10, item4);
 
 		// The item should be last, regardless of the list implementation
 		PersistentListItem[] items = list.getItems();
@@ -298,73 +299,181 @@ public abstract class PersistentListTest {
 
 	/**
 	 * @verifies insert the item at the specified index and move the existing items
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
 	@Test
 	public abstract void insert_shouldInsertTheItemAtTheSpecifiedIndexAndMoveTheExistingItems() throws Exception;
 
 	/**
 	 * @verifies throw PersistentListException when a duplicate item is inserted
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
 	@Test(expected = PersistentListException.class)
 	public void insert_shouldThrowPersistentListExceptionWhenADuplicateItemIsInserted() throws Exception {
 		PersistentListItem item1 = new PersistentListItem("1", null);
-		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item2 = new PersistentListItem("1", null);
 
 		list.add(item1);
 
-		list.insert(item2, 0);
+		list.insert(0, item2);
 	}
 
 	/**
 	 * @verifies Fire the itemAdded event with the index
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
 	@Test
 	public void insert_shouldFireTheItemAddedEventWithTheIndex() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		list.add(item1, item2, item3);
+
+		TestListEventListener listener = new TestListEventListener();
+		list.addEventListener(listener);
+
+		list.insert(1, item4);
+
+		Assert.assertEquals(1, listener.added);
+		Assert.assertEquals(1, listener.addedIndexes.size());
+		Assert.assertEquals((Integer) 1, listener.addedIndexes.get(0));
+		Assert.assertEquals(0, listener.removed);
+		Assert.assertEquals(0, listener.cleared);
 	}
 
 	/**
 	 * @verifies Reference the correct list and item when firing the itemAdded event
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
 	@Test
 	public void insert_shouldReferenceTheCorrectListAndItemWhenFiringTheItemAddedEvent() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		final PersistentListItem item = new PersistentListItem("key", null);
+
+		list.addEventListener(new ListEventListenerAdapter() {
+			@Override
+			public void itemRemoved(ListEvent event) {
+				Assert.assertEquals(list, event.getSource());
+				Assert.assertEquals(item, event.getItem());
+				Assert.assertEquals((Integer)0, event.getIndex());
+				Assert.assertEquals(ListEvent.ListOperation.ADDED, event.getOperation());
+			}
+		});
+
+		list.insert(0, item);
 	}
 
 	/**
 	 * @verifies Allow a key that is less than 250 characters
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
 	@Test
 	public void insert_shouldAllowAKeyThatIsLessThan250Characters() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item = new PersistentListItem(StringUtils.repeat("A", 250), null);
+
+		list.insert(0, item);
+
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(1, items.length);
 	}
 
 	/**
 	 * @verifies Throw IllegalArgumentException if item key is longer than 250 characters
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void insert_shouldThrowIllegalArgumentExceptionIfItemKeyIsLongerThan250Characters() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item = new PersistentListItem(StringUtils.repeat("A", 251), null);
+
+		list.insert(0, item);
 	}
 
 	/**
 	 * @verifies Block list operations on other threads until complete
-	 * @see PersistentList#insert(PersistentListItem, int)
+	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
 	@Test
 	public void insert_shouldBlockListOperationsOnOtherThreadsUntilComplete() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+
+		final PersistentListItem item4 = new PersistentListItem("4", null);
+
+		list.add(item1, item2, item3);
+
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when add is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return null;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).add(any(PersistentListItemModel.class));
+
+		// Create the thread to start the add operation
+		final PersistentListItem item = new PersistentListItem("test", null);
+		Thread addThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.insert(1, item4);
+			}
+		});
+		addThread.setName("Insert Item Thread");
+
+		// Create the thread to try to another operation while waiting on the add op
+		ListGetNextRunnable runnable = new ListGetNextRunnable(list, new ListOperation() {
+			@Override
+			public PersistentListItem execute(PersistentList list) {
+				return list.getItemAt(1);
+			}
+		});
+		Thread getThread = new Thread(runnable);
+		getThread.setName("Get Item Thread");
+
+		// Start the add op then the get op
+		addThread.start();
+		getThread.start();
+
+		// Wait for a bit to ensure that the get *should* have completed
+		Thread.sleep(100);
+
+		// The get op should not have completed yet
+		Assert.assertTrue(getThread.isAlive());
+		Assert.assertNull(runnable.getItem());
+
+		// Signal the monitor so that the add op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
+
+		// Wait for a bit to ensure that the add is done
+		Thread.sleep(100);
+
+		// Check that the add is done
+		Assert.assertFalse(addThread.isAlive());
+
+		// Wait for a bit to ensure that the get is complete
+		Thread.sleep(100);
+
+		// The get op should now have completed
+		Assert.assertFalse(getThread.isAlive());
+		Assert.assertEquals(item4, runnable.getItem());
+
 	}
 
 	/**
@@ -484,8 +593,79 @@ public abstract class PersistentListTest {
 	 */
 	@Test
 	public void remove_shouldBlockListOperationsOnOtherThreadsUntilComplete() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		final PersistentListItem item2 = new PersistentListItem("2", null);
+		list.add(item1, item2);
+
+		// Create monitor so that add operation stalls when the provider is called
+		final Lock lock = new ReentrantLock();
+		final Condition monitor = lock.newCondition();
+
+		// Setup the provider to wait on the monitor when add is called
+		doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+				lock.lock();
+				try {
+					monitor.await();
+
+					return true;
+				} finally {
+					lock.unlock();
+				}
+			}
+		}).when(mockedProvider).remove(any(PersistentListItemModel.class));
+
+		// Create the thread to start the remove operation
+		Thread addThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				list.remove(item2);
+			}
+		});
+		addThread.setName("Remove Item Thread");
+
+		// Create the thread to try to another operation while waiting on the remove op
+		ListGetNextRunnable runnable = new ListGetNextRunnable(list, new ListOperation() {
+			@Override
+			public PersistentListItem execute(PersistentList list) {
+				return list.getNext();
+			}
+		});
+		Thread getThread = new Thread(runnable);
+		getThread.setName("Get Item Thread");
+
+		// Start the remove op then the get op
+		addThread.start();
+		getThread.start();
+
+		// Wait for a bit to ensure that the get *should* have completed
+		Thread.sleep(100);
+
+		// The get op should not have completed yet
+		Assert.assertTrue(getThread.isAlive());
+		Assert.assertNull(runnable.getItem());
+
+		// Signal the monitor so that the remove op completes
+		lock.lock();
+		try {
+			monitor.signal();
+		} finally {
+			lock.unlock();
+		}
+
+		// Wait for a bit to ensure that the remove is done
+		Thread.sleep(100);
+
+		// Check that the remove is done
+		Assert.assertFalse(addThread.isAlive());
+
+		// Wait for a bit to ensure that the get is complete
+		Thread.sleep(100);
+
+		// The get op should now have completed
+		Assert.assertFalse(getThread.isAlive());
+		Assert.assertEquals(item1, runnable.getItem());
 	}
 
 	/**
@@ -907,6 +1087,7 @@ public abstract class PersistentListTest {
 
 	public class TestListEventListener implements ListEventListener {
 		public int added;
+		public ArrayList<Integer> addedIndexes = new ArrayList<Integer>();
 		public int removed;
 		public int cleared;
 
@@ -919,6 +1100,7 @@ public abstract class PersistentListTest {
 		@Override
 		public void itemAdded(ListEvent event) {
 			added++;
+			addedIndexes.add(event.getIndex());
 		}
 
 		@Override

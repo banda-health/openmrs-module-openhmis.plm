@@ -22,7 +22,6 @@ import org.openhmis.commons.Initializable;
 import org.openmrs.module.openhmis.plm.*;
 import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
 import org.openmrs.module.openhmis.plm.model.PersistentListModel;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +71,19 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	}
 
 	/**
+	 * Creates a new instance of the collection to use for the cache.
+	 * @return A new instance of the collection type.
+	 */
+	protected abstract T initializeCache();
+
+	/**
+	 * Implementors must create the logic to insert an item into the list at the specified index.
+	 * @param index The zero-based index where the item should be inserted
+	 * @param item The item to insert.
+	 */
+	protected abstract void insertItem(int index, PersistentListItem item);
+
+	/**
 	 * Implementors must create the logic needed to get the 'next' item in the list.
 	 * @return The next item in the list or {@code null} if there are no more items.
 	 */
@@ -84,7 +96,12 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	 */
 	protected abstract PersistentListItem getItemByIndex(int index);
 
-	protected abstract T initializeCache();
+	/**
+	 * Returns the index for the specified item or the index where the item will be stored if it is not already
+	 * in the cache.
+	 * @param item The item to find.
+	 * @return The index of the specified item.
+	 */
 	protected abstract int getItemIndex(PersistentListItem item);
 
 	/**
@@ -164,28 +181,22 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	@Override
 	public void add(PersistentListItem... items) {
 		PersistentListItem item = null;
+
 		try {
 			synchronized (syncLock) {
 				for (PersistentListItem listItem : items) {
 					// Store the reference to the current item (in case of an exception)
 					item = listItem;
 
-					if (item.getKey().length() > MAX_ITEM_KEY_LENGTH) {
-						throw new IllegalArgumentException("The item key must be " + MAX_ITEM_KEY_LENGTH +
-								" characters or less.");
-					}
-					if (itemKeys.contains(item.getKey())) {
-						throw new PersistentListException("An item with the key '" + item.getKey() +
-								"' has already been added to this persistent list.");
-					}
+					validateNewItem(item);
 
 					// Add the item to the cached items
 					itemKeys.add(item.getKey());
 					cachedItems.add(item);
 
 					// Add the item to the serviceProvider at the specified index
-					PersistentListItemModel modelItem = createItemModel(item);
-					provider.add(modelItem);
+					PersistentListItemModel itemModel = createItemModel(item);
+					provider.add(itemModel);
 				}
 			}
 
@@ -196,6 +207,7 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 		} catch (Exception ex) {
 			// If there was an exception while trying to add an item ensure that it is no longer in the cache.
 			cachedItems.remove(item);
+			itemKeys.remove(item.getKey());
 
 			if (ex instanceof IllegalArgumentException) {
 				throw (IllegalArgumentException)ex;
@@ -208,8 +220,41 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 	}
 
 	@Override
-	public void insert(PersistentListItem item, int index) {
-		throw new NotImplementedException();
+	public void insert(int index, PersistentListItem item) {
+		if (index < 0) {
+			throw new IllegalArgumentException("The index must be larger than or equal to zero.");
+		}
+		validateNewItem(item);
+
+		try {
+			synchronized (syncLock) {
+				// Support an index that is larger than the size of the list
+				if (index > cachedItems.size()) {
+					index = cachedItems.size();
+				}
+
+				itemKeys.add(item.getKey());
+				insertItem(index, item);
+
+				int itemOrder = getItemIndex(item);
+				PersistentListItemModel itemModel = createItemModel(item);
+				itemModel.setItemOrder(itemOrder);
+				provider.add(itemModel);
+			}
+
+			fireListEvent(new ListEvent(this, item, index, ListEvent.ListOperation.ADDED));
+		} catch (Exception ex) {
+			cachedItems.remove(item);
+			itemKeys.remove(item.getKey());
+
+			if (ex instanceof IllegalArgumentException) {
+				throw (IllegalArgumentException)ex;
+			} else if (ex instanceof PersistentListException) {
+				throw (PersistentListException)ex;
+			} else {
+				throw new PersistentListException(ex);
+			}
+		}
 	}
 
 	@Override
@@ -251,7 +296,6 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 			throw new IllegalArgumentException("The index must be a positive integer.");
 		}
 
-		// This base implementation should be overriden if possible
 		synchronized (syncLock) {
 			if (index >= cachedItems.size()) {
 				return null;
@@ -347,6 +391,17 @@ public abstract class PersistentListBase<T extends Collection<PersistentListItem
 				}
 			}
 		});
+	}
+
+	protected void validateNewItem(PersistentListItem item) {
+		if (item.getKey().length() > MAX_ITEM_KEY_LENGTH) {
+			throw new IllegalArgumentException("The item key must be " + MAX_ITEM_KEY_LENGTH +
+					" characters or less.");
+		}
+		if (itemKeys.contains(item.getKey())) {
+			throw new PersistentListException("An item with the key '" + item.getKey() +
+					"' has already been added to this persistent list.");
+		}
 	}
 }
 

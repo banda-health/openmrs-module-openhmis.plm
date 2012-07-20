@@ -99,7 +99,7 @@ public class TestPersistentList implements PersistentList {
 	}
 
 	@Override
-	public void insert(PersistentListItem item, int index) {
+	public void insert(int index, PersistentListItem item) {
 		throw new NotImplementedException();
 	}
 

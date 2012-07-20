@@ -34,6 +34,16 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 		super(id, key, provider);
 	}
 
+	@Override
+	protected Stack<PersistentListItem> initializeCache() {
+		return new Stack<PersistentListItem>();
+	}
+
+	@Override
+	protected void insertItem(int index, PersistentListItem item) {
+		cachedItems.add(index, item);
+	}
+
 	/**
 	 * Gets the next {@link PersistentListItem} without removing the item from the list.
 	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
@@ -63,11 +73,6 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 	}
 
 	@Override
-	protected Stack<PersistentListItem> initializeCache() {
-		return new Stack<PersistentListItem>();
-	}
-
-	@Override
 	protected int getItemIndex(PersistentListItem item) {
 		/*
 			New items are added to the front of the list.
@@ -88,6 +93,6 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 
 	@Override
 	protected PersistentListItem getItemByIndex(int index) {
-		return cachedItems.get(index * -1);
+		return cachedItems.get(index);
 	}
 }
