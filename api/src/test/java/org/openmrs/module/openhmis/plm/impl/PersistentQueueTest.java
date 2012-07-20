@@ -37,6 +37,7 @@ public class PersistentQueueTest extends PersistentListBaseTest {
 		PersistentListItem item2 = new PersistentListItem("2", null);
 		PersistentListItem item3 = new PersistentListItem("3", null);
 		PersistentListItem item4 = new PersistentListItem("4", null);
+		PersistentListItem item5 = new PersistentListItem("5", null);
 
 		// Add some items to the list
 		list.add(item1, item2, item3);
@@ -52,6 +53,64 @@ public class PersistentQueueTest extends PersistentListBaseTest {
 		Assert.assertEquals(item4, items[1]);
 		Assert.assertEquals(item2, items[2]);
 		Assert.assertEquals(item3, items[3]);
+
+		list.insert(3, item5);
+
+		items = list.getItems();
+		Assert.assertEquals(5, items.length);
+		Assert.assertEquals(item1, items[0]);
+		Assert.assertEquals(item4, items[1]);
+		Assert.assertEquals(item2, items[2]);
+		Assert.assertEquals(item5, items[3]);
+		Assert.assertEquals(item3, items[4]);
+	}
+
+	@Test
+	@Override
+	public void insert_shouldInsertTheItemProperlyAtTheBeginningOfTheList() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		// Add some items to the list
+		list.add(item1, item2, item3);
+		Assert.assertEquals(3, list.getSize());
+
+		// Insert the item at the start
+		list.insert(0, item4);
+
+		// Now check the order
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(4, items.length);
+		Assert.assertEquals(item4, items[0]);
+		Assert.assertEquals(item1, items[1]);
+		Assert.assertEquals(item2, items[2]);
+		Assert.assertEquals(item3, items[3]);
+	}
+
+	@Test
+	@Override
+	public void insert_shouldInsertTheItemProperlyAtTheEndOfTheList() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		// Add some items to the list
+		list.add(item1, item2, item3);
+		Assert.assertEquals(3, list.getSize());
+
+		// Insert the item at the end
+		list.insert(3, item4);
+
+		// Now check the order
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(4, items.length);
+		Assert.assertEquals(item1, items[0]);
+		Assert.assertEquals(item2, items[1]);
+		Assert.assertEquals(item3, items[2]);
+		Assert.assertEquals(item4, items[3]);
 	}
 
 	/**
@@ -127,6 +186,30 @@ public class PersistentQueueTest extends PersistentListBaseTest {
 		item = list.getNext();
 		Assert.assertNotNull(item);
 		Assert.assertEquals(item2, item);
+	}
+
+	/**
+	 * @verifies Return the item at the specified index
+	 * @see PersistentList#getItemAt(int)
+	 */
+	@Test
+	@Override
+	public void getItemAt_shouldReturnTheItemAtTheSpecifiedIndex() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+		PersistentListItem item2 = new PersistentListItem("2", null);
+		PersistentListItem item3 = new PersistentListItem("3", null);
+		PersistentListItem item4 = new PersistentListItem("4", null);
+
+		list.add(item1, item2, item3, item4);
+
+		PersistentListItem item = list.getItemAt(0);
+		Assert.assertEquals(item1, item);
+
+		item = list.getItemAt(1);
+		Assert.assertEquals(item2, item);
+
+		item = list.getItemAt(3);
+		Assert.assertEquals(item4, item);
 	}
 }
 

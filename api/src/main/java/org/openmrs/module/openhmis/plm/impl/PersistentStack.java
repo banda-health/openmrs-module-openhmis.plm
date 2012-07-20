@@ -41,6 +41,13 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 
 	@Override
 	protected void insertItem(int index, PersistentListItem item) {
+		index = getStackIndex(index);
+
+		if (cachedItems.size() > 0) {
+			// Add one to the stack index to get the location where the item will be inserted
+			index++;
+		}
+
 		cachedItems.add(index, item);
 	}
 
@@ -93,6 +100,17 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 
 	@Override
 	protected PersistentListItem getItemByIndex(int index) {
+		index = getStackIndex(index);
+
 		return cachedItems.get(index);
+	}
+
+	/**
+	 * Converts the specified index from the reversed index returned by getItems to the internal stack index.
+	 * @param index The index to convert.
+	 * @return The converted index.
+	 */
+	protected int getStackIndex(int index) {
+		return Math.max(cachedItems.size() - 1, 0) - index;
 	}
 }

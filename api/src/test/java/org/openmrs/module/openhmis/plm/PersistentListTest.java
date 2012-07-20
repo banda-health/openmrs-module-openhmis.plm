@@ -305,6 +305,37 @@ public abstract class PersistentListTest {
 	public abstract void insert_shouldInsertTheItemAtTheSpecifiedIndexAndMoveTheExistingItems() throws Exception;
 
 	/**
+	 * @verifies insert the item properly at the beginning of the list
+	 * @see PersistentList#insert(int, PersistentListItem)
+	 */
+	@Test
+	public abstract void insert_shouldInsertTheItemProperlyAtTheBeginningOfTheList() throws Exception;
+
+	/**
+	 * @verifies insert the item properly at the end of the list
+	 * @see PersistentList#insert(int, PersistentListItem)
+	 */
+	@Test
+	public abstract void insert_shouldInsertTheItemProperlyAtTheEndOfTheList() throws Exception;
+
+	/**
+	 * @verifies insert the item properly when the list is empty
+	 * @see PersistentList#insert(int, PersistentListItem)
+	 */
+	@Test
+	public void insert_shouldInsertTheItemProperlyWhenTheListIsEmpty() throws Exception {
+		PersistentListItem item1 = new PersistentListItem("1", null);
+
+		// Insert the item into an empty list
+		list.insert(0, item1);
+
+		// Now check the order
+		PersistentListItem[] items = list.getItems();
+		Assert.assertEquals(1, items.length);
+		Assert.assertEquals(item1, items[0]);
+	}
+
+	/**
 	 * @verifies throw PersistentListException when a duplicate item is inserted
 	 * @see PersistentList#insert(int, PersistentListItem)
 	 */
@@ -796,18 +827,7 @@ public abstract class PersistentListTest {
 	 * @see PersistentList#getItemAt(int)
 	 */
 	@Test
-	public void getItemAt_shouldReturnTheItemAtTheSpecifiedIndex() throws Exception {
-		PersistentListItem item1 = new PersistentListItem("1", null);
-		PersistentListItem item2 = new PersistentListItem("2", null);
-
-		list.add(item1, item2);
-
-		PersistentListItem item = list.getItemAt(0);
-		Assert.assertEquals(item1, item);
-
-		item = list.getItemAt(1);
-		Assert.assertEquals(item2, item);
-	}
+	public abstract void getItemAt_shouldReturnTheItemAtTheSpecifiedIndex() throws Exception;
 
 	/**
 	 * @verifies Return null when there is no item at the specified index

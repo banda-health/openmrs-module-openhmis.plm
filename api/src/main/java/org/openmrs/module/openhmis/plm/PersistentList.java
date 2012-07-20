@@ -87,6 +87,9 @@ public interface PersistentList {
 	 * @should throw IllegalArgumentException if the index is less than zero
 	 * @should insert the item at the end of the list if the index is larger than the list size
 	 * @should insert the item at the specified index and move the existing items
+	 * @should insert the item properly at the beginning of the list
+	 * @should insert the item properly at the end of the list
+	 * @should insert the item properly when the list is empty
 	 * @should throw PersistentListException when a duplicate item is inserted
 	 * @should Fire the itemAdded event with the index
 	 * @should Reference the correct list and item when firing the itemAdded event
