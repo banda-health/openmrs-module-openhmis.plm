@@ -26,7 +26,6 @@ import org.openmrs.module.openhmis.plm.PersistentListServiceProvider;
 import org.openmrs.module.openhmis.plm.model.PersistentListModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 
 @Component
@@ -39,6 +38,11 @@ public class DatabaseServiceProvider implements PersistentListServiceProvider {
 		this.sessionFactory = sessionFactory;
 	}
 
+	/**
+	 * Gets all existing lists from the database.
+	 * @return Array of existing {@link PersistentListModel}s
+	 * @should return existing lists
+	 */
 	@Override
 	public PersistentListModel[] getLists() {
 		Session session = sessionFactory.getCurrentSession();
@@ -50,23 +54,34 @@ public class DatabaseServiceProvider implements PersistentListServiceProvider {
 		} catch (Exception ex) {
 			throw new PersistentListException("An exception occurred while attempting to get the lists.", ex);
 		} finally {
-			session.close();
+			//session.close();
 		}
 	}
 
+	/**
+	 * Adds a list to the database.
+	 * @return Integer The primary key of the new database record
+	 * @should add a new list
+	 */
 	@Override
-	public void addList(PersistentListModel list) {
+	public Integer addList(PersistentListModel list) {
 		Session session = sessionFactory.getCurrentSession();
+		Integer listId = null;
 
 		try {
-			session.save(list);
+			listId = (Integer) session.save(list);
 		} catch (Exception ex) {
 			throw new PersistentListException("An exception occurred while attempting to add a list.", ex);
 		} finally {
-			session.close();
+			//session.close();
 		}
+		return listId;
 	}
 
+	/**
+	 * Removes a list from the database by its key
+	 * @should remove a list
+	 */
 	@Override
 	public void removeList(String key) {
 		Session session = sessionFactory.getCurrentSession();
@@ -84,7 +99,7 @@ public class DatabaseServiceProvider implements PersistentListServiceProvider {
 		} catch (Exception ex) {
 			throw new PersistentListException("An exception occurred while attempting to add a list.", ex);
 		} finally {
-			session.close();
+			//session.close();
 		}
 	}
 }

@@ -29,12 +29,13 @@ public interface PersistentListServiceProvider {
 	/**
 	 * Adds a {@link PersistentList}.
 	 * @param list The {@link PersistentList} to persist.
+	 * @return Integer The list ID from the database
 	 */
-	void addList(PersistentListModel list);
+	Integer addList(PersistentListModel list);
 
 	/**
 	 * Removes a {@link PersistentList}.
-	 * @param key The key of teh {@link PersistentList} to remove.
+	 * @param key The key of the {@link PersistentList} to remove.
 	 */
 	void removeList(String key);
 }

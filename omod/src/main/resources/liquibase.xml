@@ -7,12 +7,12 @@
         See http://www.liquibase.org/manual/home#available_database_refactorings
         for a list of supported elements and attributes
     -->
-    <changeSet id="openhmis.plm-2012-07-05-15:03" author="ibewes">
+    <changeSet id="openhmis.plm-2012-07-22-15:03" author="ibewes">
         <createTable tableName="plm_list">
             <column name="id" type="int" autoIncrement="true">
                 <constraints  nullable="false" primaryKey="true"/>
             </column>
-            <column name="key" type="varchar(250)">
+            <column name="list_key" type="varchar(250)">
                 <constraints nullable="false" unique="true" />
             </column>
             <column name="list_provider" type="varchar(500)">
@@ -26,7 +26,7 @@
             </column>
         </createTable>
         <createIndex tableName="plm_list" indexName="plm_key_unique">
-            <column name="key" />
+            <column name="list_key" />
         </createIndex>
 
 	    <createTable tableName="plm_list_item">
@@ -36,7 +36,7 @@
 		    <column name="list_id" type="int">
 			    <constraints nullable="false" />
 		    </column>
-		    <column name="key" type="varchar(250)">
+		    <column name="item_key" type="varchar(250)">
 			    <constraints nullable="false" />
 		    </column>
 		    <column name="item_order" type="int">
@@ -54,7 +54,7 @@
 	    </createTable>
 	    <createIndex tableName="plm_list_item" indexName="plm_list_item_index">
 		    <column name="list_id"/>
-		    <column name="key"/>
+		    <column name="item_key"/>
 	    </createIndex>
 	    <createIndex tableName="plm_list_item" indexName="plm_list_item_order_index">
 		    <column name="list_id"/>

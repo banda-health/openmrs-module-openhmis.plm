@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   	<class name="org.openmrs.module.openhmis.plm.model.PersistentListItemModel" table="plm_list_item">
+		<meta attribute="class-description">
+			List item model 
+  		</meta>
+ 		<id name="itemId" type="int" column="id">
+       		<generator class="native"/>
+    	</id>
+    	<property name="listId" column="list_id" type="int"/>
+      	<property name="itemKey" column="item_key" type="string"/>
+      	<property name="itemOrder" column="item_order" type="int" />
+      	<property name="customOrder" column="custom_order" type="string"/>
+		<component name="creator" class="org.openmrs.User">
+			<property name="userId" column="creator" type="int"/>
+		</component>
+      	<property name="dateCreated" column="date_created" type="date"/>
+   	</class>
+</hibernate-mapping>

@@ -124,7 +124,7 @@ public class DatabaseListProvider implements PersistentListProvider {
 
 			throw new PersistentListException("An exception occurred while attempting to add the item to the list.", ex);
 		} finally {
-			session.close();
+			//session.close();
 		}
 	}
 
@@ -172,7 +172,7 @@ public class DatabaseListProvider implements PersistentListProvider {
 
 			throw new PersistentListException("An exception occurred while attempting to delete the item from the list.", ex);
 		} finally {
-			session.close();
+			//session.close();
 		}
 
 		return true;
@@ -203,7 +203,7 @@ public class DatabaseListProvider implements PersistentListProvider {
 		} catch (Exception ex) {
 			throw new PersistentListException("An exception occurred while attempting to get the list items.", ex);
 		} finally {
-			session.close();
+			//session.close();
 		}
 	}
 
@@ -220,16 +220,15 @@ public class DatabaseListProvider implements PersistentListProvider {
 		try {
 			// Return the items in the specified list ordered by the primary order
 			Criteria search = session.createCriteria(PersistentListItemModel.class)
-					.add(Restrictions.eq("list_id", list.getId()))
-					.addOrder(Order.asc("primary_order"))
-					.addOrder(Order.asc("secondary_order"))
-					.addOrder(Order.asc("tertiary_order"));
-
+					.add(Restrictions.eq("listId", list.getId()))
+					.addOrder(Order.asc("itemOrder"))
+					.addOrder(Order.asc("customOrder"));
+			
 			result = new ArrayList<PersistentListItemModel>(search.list());
 		} catch (Exception ex) {
 			throw new PersistentListException("An exception occurred while attempting to get the list items.", ex);
 		} finally {
-			session.close();
+			//session.close();
 		}
 
 		if (result == null) {

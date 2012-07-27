@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <plm_list id="1"
+  	list_key="Test"
+  	list_provider="org.openmrs.module.openhmis.plm.impl.PersistentQueue"
+  	description="Test list"
+  	date_created="2012-07-22"/>
+  <plm_list_item/>
+</dataset>

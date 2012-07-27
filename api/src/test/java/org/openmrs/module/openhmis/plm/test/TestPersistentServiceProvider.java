@@ -24,8 +24,8 @@ public class TestPersistentServiceProvider implements PersistentListServiceProvi
 	}
 
 	@Override
-	public void addList(PersistentListModel list) {
-
+	public Integer addList(PersistentListModel list) {
+		return 1;
 	}
 
 	@Override

@@ -23,6 +23,10 @@ import java.util.LinkedList;
  * A persistent list which is implemented as a queue (first in, first out) data structure.
  */
 public class PersistentQueue extends PersistentListBase<LinkedList<PersistentListItem>> {
+	public PersistentQueue() {
+		super();
+	}
+
 	public PersistentQueue(String key, PersistentListProvider provider) {
 		super(key, provider);
 	}
