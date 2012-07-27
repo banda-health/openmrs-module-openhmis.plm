@@ -34,31 +34,34 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 		super(id, key, provider);
 	}
 
+	@Override
+	protected Stack<PersistentListItem> initializeCache() {
+		return new Stack<PersistentListItem>();
+	}
+
+	@Override
+	protected void insertItem(int index, PersistentListItem item) {
+		index = getStackIndex(index);
+
+		if (cachedItems.size() > 0) {
+			// Add one to the stack index to get the location where the item will be inserted
+			index++;
+		}
+
+		cachedItems.add(index, item);
+	}
+
 	/**
 	 * Gets the next {@link PersistentListItem} without removing the item from the list.
 	 * @return The next {@link PersistentListItem} or {@code null} if no items are defined.
 	 * @should Return items in last in first out order
 	 */
 	@Override
-	public PersistentListItem getNext() {
+	public PersistentListItem getNextItem() {
 		if (cachedItems.size() == 0) {
 			return null;
 		} else {
 			return cachedItems.peek();
-		}
-	}
-
-	/**
-	 * Gets the next {@link PersistentListItem} and removes it from the list.
-	 * @return The next {@link PersistentListItem}.
-	 * @should Return items in last in first out order
-	 */
-	@Override
-	public PersistentListItem getNextAndRemove() {
-		if (cachedItems.size() == 0) {
-			return null;
-		} else {
-			return cachedItems.pop();
 		}
 	}
 
@@ -74,11 +77,6 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 		Collections.reverse(list);
 
 		return list.toArray(new PersistentListItem[list.size()]);
-	}
-
-	@Override
-	protected Stack<PersistentListItem> initializeCache() {
-		return new Stack<PersistentListItem>();
 	}
 
 	@Override
@@ -98,5 +96,21 @@ public class PersistentStack extends PersistentListBase<Stack<PersistentListItem
 		}
 
 		return index * -1;
+	}
+
+	@Override
+	protected PersistentListItem getItemByIndex(int index) {
+		index = getStackIndex(index);
+
+		return cachedItems.get(index);
+	}
+
+	/**
+	 * Converts the specified index from the reversed index returned by getItems to the internal stack index.
+	 * @param index The index to convert.
+	 * @return The converted index.
+	 */
+	protected int getStackIndex(int index) {
+		return Math.max(cachedItems.size() - 1, 0) - index;
 	}
 }

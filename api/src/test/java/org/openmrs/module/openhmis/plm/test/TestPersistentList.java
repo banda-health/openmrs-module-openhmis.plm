@@ -99,6 +99,11 @@ public class TestPersistentList implements PersistentList {
 	}
 
 	@Override
+	public void insert(int index, PersistentListItem item) {
+		throw new NotImplementedException();
+	}
+
+	@Override
 	public boolean remove(PersistentListItem item) {
 		throw new NotImplementedException();
 	}
@@ -110,6 +115,11 @@ public class TestPersistentList implements PersistentList {
 
 	@Override
 	public PersistentListItem[] getItems() {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public PersistentListItem getItemAt(int index) {
 		throw new NotImplementedException();
 	}
 

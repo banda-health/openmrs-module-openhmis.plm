@@ -175,7 +175,6 @@ public class PersistentListServiceImpl implements PersistentListService {
 			list = createList(model);
 
 			// Add the list to the service list and key caches
-			lists.put(list.getKey(), list);
 			lists.put(key, list);
 		}
 
