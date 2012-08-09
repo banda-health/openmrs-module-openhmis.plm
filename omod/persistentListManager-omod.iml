@@ -33,11 +33,11 @@
       <excludeFolder url="file://$MODULE_DIR$/target/maven-archiver" />
       <excludeFolder url="file://$MODULE_DIR$/target/openhmis-plm-0.5-SNAPSHOT" />
       <excludeFolder url="file://$MODULE_DIR$/target/surefire" />
+      <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="persistentListManager-api" />
-    <orderEntry type="library" name="Maven: org.openhmis.commons:openhmis-commons:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.api:openmrs-api:1.9.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-collections:commons-collections:3.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.commons:commons-lang3:3.1" level="project" />
@@ -165,6 +165,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.15.0-GA" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-mockito:1.4.10" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.powermock:powermock-api-support:1.4.10" level="project" />
+    <orderEntry type="library" name="Maven: org.openhmis.commons:openhmis-commons:1.0.0-SNAPSHOT" level="project" />
   </component>
 </module>
 
