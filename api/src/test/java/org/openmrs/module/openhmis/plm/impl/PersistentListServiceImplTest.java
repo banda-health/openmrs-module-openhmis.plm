@@ -14,7 +14,7 @@
 
 package org.openmrs.module.openhmis.plm.impl;
 
-import liquibase.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
