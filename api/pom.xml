@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.openmrs.module.openhmis</groupId>
-		<artifactId>openhmis-plm</artifactId>
+		<groupId>org.openmrs.module</groupId>
+		<artifactId>openhmis.plm</artifactId>
 		<version>0.5-SNAPSHOT</version>
 	</parent>
 

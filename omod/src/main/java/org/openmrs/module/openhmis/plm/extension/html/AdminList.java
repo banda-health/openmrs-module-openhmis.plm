@@ -36,7 +36,7 @@ public class AdminList extends AdministrationSectionExt {
 	 * @see AdministrationSectionExt#getTitle()
 	 */
 	public String getTitle() {
-		return "plm.title";
+		return "openhmis.plm.title";
 	}
 	
 	/**
@@ -44,7 +44,7 @@ public class AdminList extends AdministrationSectionExt {
 	 */
 	public Map<String, String> getLinks() {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-		map.put("/module/plm/manage.form", "plm.manage");
+		map.put("/module/openhmis/plm/manage.page", "openhmis.plm.manage");
 		return map;
 	}
 	
