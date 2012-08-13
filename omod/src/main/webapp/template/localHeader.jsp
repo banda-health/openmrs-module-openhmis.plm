@@ -22,11 +22,11 @@
 		<c:if test='<%= request.getRequestURI().contains("/manage") %>'>class="active"</c:if>>
 		<a
 		href="${pageContext.request.contextPath}/module/list/manage.form"><spring:message
-				code="list.manage" /></a>
+				code="openhmis.plm.manage" /></a>
 	</li>
 	
 	<!-- Add further links here -->
 </ul>
-<h2>
-	<spring:message code="list.title" />
-</h2>
+<h3>
+	<spring:message code="openhmis.plm.title" />
+</h3>

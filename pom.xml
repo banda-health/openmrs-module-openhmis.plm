@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.openmrs.module.openhmis</groupId>
-	<artifactId>openhmis-plm</artifactId>
+	<groupId>org.openmrs.module</groupId>
+	<artifactId>openhmis.plm</artifactId>
 	<version>0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>OpenHMIS Persistent List Manager Module</name>
@@ -35,7 +35,6 @@
 	<properties>
 		<openMRSVersion>1.9.0</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<modulePackage>plm</modulePackage>
 	</properties>
 
 	<dependencyManagement>
