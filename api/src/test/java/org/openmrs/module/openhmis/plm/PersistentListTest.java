@@ -40,6 +40,8 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(PowerMockRunner.class)
 public abstract class PersistentListTest {
+	protected final static int WAIT_TIME = 200;
+
 	protected PersistentListProvider mockedProvider;
 	protected PersistentList list;
 
@@ -231,11 +233,11 @@ public abstract class PersistentListTest {
 
 		// Start the add op then the get op
 		addThread.start();
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 		getThread.start();
 
 		// Wait for a bit to ensure that the get *should* have completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The get op should not have completed yet
 		Assert.assertTrue(getThread.isAlive());
@@ -250,13 +252,13 @@ public abstract class PersistentListTest {
 		}
 
 		// Wait for a bit to ensure that the add is done
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Check that the add is done
 		Assert.assertFalse(addThread.isAlive());
 
 		// Wait for a bit to ensure that the get is complete
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The get op should now have completed
 		Assert.assertFalse(getThread.isAlive());
@@ -476,11 +478,11 @@ public abstract class PersistentListTest {
 
 		// Start the add op then the get op
 		addThread.start();
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 		getThread.start();
 
 		// Wait for a bit to ensure that the get *should* have completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The get op should not have completed yet
 		Assert.assertTrue(getThread.isAlive());
@@ -495,13 +497,13 @@ public abstract class PersistentListTest {
 		}
 
 		// Wait for a bit to ensure that the add is done
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Check that the add is done
 		Assert.assertFalse(addThread.isAlive());
 
 		// Wait for a bit to ensure that the get is complete
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The get op should now have completed
 		Assert.assertFalse(getThread.isAlive());
@@ -670,11 +672,11 @@ public abstract class PersistentListTest {
 
 		// Start the remove op then the get op
 		addThread.start();
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 		getThread.start();
 
 		// Wait for a bit to ensure that the get *should* have completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The get op should not have completed yet
 		Assert.assertTrue(getThread.isAlive());
@@ -689,13 +691,13 @@ public abstract class PersistentListTest {
 		}
 
 		// Wait for a bit to ensure that the remove is done
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Check that the remove is done
 		Assert.assertFalse(addThread.isAlive());
 
 		// Wait for a bit to ensure that the get is complete
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The get op should now have completed
 		Assert.assertFalse(getThread.isAlive());
@@ -811,11 +813,11 @@ public abstract class PersistentListTest {
 
 		// Start the test op then the blocked op
 		blockingThread.start();
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 		blockedThread.start();
 
 		// Wait for a bit to ensure that the blocked *should* have completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Test that the block op has completed
 		Assert.assertTrue(blockedThread.isAlive());
@@ -830,13 +832,13 @@ public abstract class PersistentListTest {
 		}
 
 		// Wait for a bit to ensure that the test op is done
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Check that the test op is done
 		Assert.assertFalse(blockingThread.isAlive());
 
 		// Wait for a bit to ensure that the blocked op is complete
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The blocked op should now have completed
 		Assert.assertFalse(blockedThread.isAlive());
@@ -933,11 +935,11 @@ public abstract class PersistentListTest {
 
 		// Start the test op then the blocked op
 		blockingThread.start();
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 		blockedThread.start();
 
 		// Wait for a bit to ensure that the blocked *should* have completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Test that the block op has completed
 		Assert.assertTrue(blockedThread.isAlive());
@@ -952,13 +954,13 @@ public abstract class PersistentListTest {
 		}
 
 		// Wait for a bit to ensure that the test op is done
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Check that the test op is done
 		Assert.assertFalse(blockingThread.isAlive());
 
 		// Wait for a bit to ensure that the blocked op is complete
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The blocked op should now have completed
 		Assert.assertFalse(blockedThread.isAlive());
@@ -1068,11 +1070,11 @@ public abstract class PersistentListTest {
 
 		// Start the test op then the blocked op
 		blockingThread.start();
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 		blockedThread.start();
 
 		// Wait for a bit to ensure that the blocked *should* have completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Test that the block op has completed
 		Assert.assertTrue(blockedThread.isAlive());
@@ -1087,13 +1089,13 @@ public abstract class PersistentListTest {
 		}
 
 		// Wait for a bit to ensure that the test op is done
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Check that the test op is done
 		Assert.assertFalse(blockingThread.isAlive());
 
 		// Wait for a bit to ensure that the blocked op is complete
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The blocked op should now have completed
 		Assert.assertFalse(blockedThread.isAlive());
@@ -1177,11 +1179,11 @@ public abstract class PersistentListTest {
 
 		// Start the test op then the blocked op
 		blockingThread.start();
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 		blockedThread.start();
 
 		// Wait for a bit to ensure that the blocked *should* have completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Test that the block op has completed
 		Assert.assertTrue(blockedThread.isAlive());
@@ -1196,13 +1198,13 @@ public abstract class PersistentListTest {
 		}
 
 		// Wait for a bit to ensure that the test op is done
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Check that the test op is done
 		Assert.assertFalse(blockingThread.isAlive());
 
 		// Wait for a bit to ensure that the blocked op is complete
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The blocked op should now have completed
 		Assert.assertFalse(blockedThread.isAlive());
@@ -1311,7 +1313,7 @@ public abstract class PersistentListTest {
 		blockedThread.start();
 
 		// Wait for a bit to ensure that the blocked *should* have completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Test that the block op has completed
 		Assert.assertTrue(blockedThread.isAlive());
@@ -1326,13 +1328,13 @@ public abstract class PersistentListTest {
 		}
 
 		// Wait for a bit to ensure that the test op is done
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Check that the test op is done
 		Assert.assertFalse(blockingThread.isAlive());
 
 		// Wait for a bit to ensure that the blocked op is complete
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// The blocked op should now have completed
 		Assert.assertFalse(blockedThread.isAlive());
@@ -1417,11 +1419,11 @@ public abstract class PersistentListTest {
 
 		// Start the test op then the blocked op
 		blockingThread.start();
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 		unblockedThread.start();
 
 		// Wait for a bit to ensure that the blocked has completed
-		Thread.sleep(100);
+		Thread.sleep(WAIT_TIME);
 
 		// Test that the unblocked op has completed
 		Assert.assertFalse(unblockedThread.isAlive());
