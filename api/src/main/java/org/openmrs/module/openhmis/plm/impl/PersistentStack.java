@@ -26,6 +26,10 @@ import java.util.Stack;
  * A persistent list which is implemented as a stack (first in, last out) data structure.
  */
 public class PersistentStack extends PersistentListBase<Stack<PersistentListItem>> {
+	public PersistentStack() {
+		super();
+	}
+
 	public PersistentStack(String key, PersistentListProvider provider) {
 		super(key, provider);
 	}

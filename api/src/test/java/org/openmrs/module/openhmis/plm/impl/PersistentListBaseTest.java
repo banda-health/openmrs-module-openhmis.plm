@@ -26,12 +26,12 @@ import org.openmrs.module.openhmis.plm.model.PersistentListItemModel;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-public abstract class PersistentListBaseTest extends PersistentListTest {
-	protected abstract PersistentList createList(PersistentListProvider mockedProvider);
+public abstract class PersistentListBaseTest<T extends PersistentListBase> extends PersistentListTest<T> {
+	protected abstract T createList(PersistentListProvider mockedProvider);
 
 	@Override
-	protected PersistentList loadList(PersistentListProvider mockedProvider) {
-		PersistentList result = createList(mockedProvider);
+	protected T loadList(PersistentListProvider mockedProvider) {
+		T result = createList(mockedProvider);
 
 		Initializable init = Utility.as(Initializable.class, result);
 		if (init != null) {

@@ -39,19 +39,28 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
 @RunWith(PowerMockRunner.class)
-public abstract class PersistentListTest {
+public abstract class PersistentListTest<T extends PersistentList> {
 	protected final static int WAIT_TIME = 200;
 
 	protected PersistentListProvider mockedProvider;
-	protected PersistentList list;
+	protected T list;
 
-	protected abstract PersistentList loadList(PersistentListProvider mockedProvider);
+	protected abstract T loadList(PersistentListProvider mockedProvider);
 
 	@Before
 	public void before() {
 		mockedProvider = mock(PersistentListProvider.class);
 
 		list = loadList(mockedProvider);
+	}
+
+	@Test
+	public void shouldHaveADefaultConstructor() throws Exception {
+		// The list parameter will already have been loaded so just get the class and ensure that a new instance can be
+		//  created without any parameters.  This will throw if the instance cannot be created.
+		PersistentList defaultList = list.getClass().newInstance();
+
+		Assert.assertNotNull(defaultList);
 	}
 
 	/**

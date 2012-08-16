@@ -27,9 +27,9 @@ import java.util.Date;
 
 import static org.mockito.Mockito.when;
 
-public class PersistentQueueTest extends PersistentListBaseTest {
+public class PersistentQueueTest extends PersistentListBaseTest<PersistentQueue> {
 	@Override
-	protected PersistentList createList(PersistentListProvider mockedProvider) {
+	protected PersistentQueue createList(PersistentListProvider mockedProvider) {
 		return new PersistentQueue(1, "test", mockedProvider);
 	}
 
